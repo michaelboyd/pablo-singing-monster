@@ -47,6 +47,12 @@ public class Monster {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	
+
+	public long getId() {
+		return id;
+	}
 
 	public String getName() {
 		return name;
