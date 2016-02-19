@@ -11,6 +11,7 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -37,7 +38,7 @@ public class MonsterEditor extends VerticalLayout {
 
 	/* Fields to edit properties in Monster entity */
 	TextField name = new TextField("Name");
-	TextField description = new TextField("Description");
+	TextArea description = new TextArea("Description");
 
 	/* Action buttons */
 	Button save = new Button("Save", FontAwesome.SAVE);
