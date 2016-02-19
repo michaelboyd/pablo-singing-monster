@@ -2,7 +2,6 @@ package com.monster.rest.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +15,7 @@ public class MonsterController {
 	
 	@Autowired
 	private MonsterRepository repository;
-	
-	private static final String template = "Hello, %s!";
-	private final AtomicLong counter = new AtomicLong();
-	
-	//returns JSON and is not mapped to /api like other REST resources mapped by spring-boot-starter-data-rest
-	
+
 	@RequestMapping("/list-monsters") 
     public List <Monster> getAllMonsters() {
 		
