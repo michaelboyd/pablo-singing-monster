@@ -1,0 +1,8 @@
+#unit tests
+mvn clean test -P dev
+
+#integration tests
+mvn clean verify -P integration-test
+
+#run spring boot app
+mvn spring-boot:run

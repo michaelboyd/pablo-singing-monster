@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+	<monster id="1"
+	           name="MonsterOne"
+	           description="this is the first monster"
+	           />
+	<monster id="2"
+	           name="MonsterTwo"
+	           description="this is the second monster"
+	           />           
+</dataset>

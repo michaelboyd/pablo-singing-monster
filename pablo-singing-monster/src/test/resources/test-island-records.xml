@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+	<island id="1"
+	           name="IslandOne"	           
+	           />
+
+	<island id="2"
+	           name="IslandTwo"	           
+	           />           
+</dataset>
