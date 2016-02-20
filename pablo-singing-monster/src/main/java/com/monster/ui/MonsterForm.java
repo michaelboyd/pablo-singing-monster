@@ -20,14 +20,6 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
-/* Create custom UI Components.
- *
- * Create your own Vaadin components by inheritance and composition.
- * This is a form component inherited from VerticalLayout. Use
- * Use BeanFieldGroup to bind data fields from DTO to UI fields.
- * Similarly named field by naming convention or customized
- * with @PropertyId annotation.
- */
 @SpringComponent
 @UIScope
 public class MonsterForm extends FormLayout {
@@ -43,8 +35,7 @@ public class MonsterForm extends FormLayout {
 	@Autowired
 	private MonsterRepository monsterRepo;    
 
-    // Easily bind forms to beans and manage validation and buffering
-    BeanFieldGroup <Monster> formFieldBindings;
+    private BeanFieldGroup <Monster> formFieldBindings;
 
     public MonsterForm() {
         configureComponents();
@@ -52,11 +43,6 @@ public class MonsterForm extends FormLayout {
     }
 
     private void configureComponents() {
-        /* Highlight primary actions.
-         *
-         * With Vaadin built-in styles you can highlight the primary save button
-         * and give it a keyboard shortcut for a better UX.
-         */
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         setVisible(false);
@@ -65,29 +51,15 @@ public class MonsterForm extends FormLayout {
     private void buildLayout() {
         setSizeUndefined();
         setMargin(true);
-
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
         actions.setSpacing(true);
-
 		addComponents(actions, name, description);
     }
 
-    /* Use any JVM language.
-     *
-     * Vaadin supports all languages supported by Java Virtual Machine 1.6+.
-     * This allows you to program user interface in Java 8, Scala, Groovy or any other
-     * language you choose.
-     * The new languages give you very powerful tools for organizing your code
-     * as you choose. For example, you can implement the listener methods in your
-     * compositions or in separate controller classes and receive
-     * to various Vaadin component events, like button clicks. Or keep it simple
-     * and compact with Lambda expressions.
-     */
     public void save(Button.ClickEvent event) {
         try {
 
         	formFieldBindings.commit();
-        	//formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
             monsterRepo.save(monster);
 
 			String msg = String.format("Saved '%s'.", monster.getName());

@@ -24,15 +24,13 @@ public class MonsterUI extends UI {
 	private final Grid monsterList = new Grid();
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
-	
+	//discoverable beans
 	private final MonsterRepository repo;
-	private final MonsterEditor editor;
 	private final MonsterForm monsterForm;
 	
 	@Autowired
-	public MonsterUI(MonsterRepository repo, MonsterEditor editor, MonsterForm monsterForm) {
+	public MonsterUI(MonsterRepository repo, MonsterForm monsterForm) {
 		this.repo = repo;
-		this.editor = editor;
 		this.monsterForm = monsterForm;
 	}
 
@@ -92,7 +90,4 @@ public class MonsterUI extends UI {
 	TextField getFilter() {
 		return filter;
 	}
-	
-	
-
 }
