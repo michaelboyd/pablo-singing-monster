@@ -2,8 +2,6 @@ package com.monster.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import antlr.StringUtils;
-
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
