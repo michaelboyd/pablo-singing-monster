@@ -1,0 +1,154 @@
+package com.monster.ui;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import antlr.StringUtils;
+
+import com.monster.domain.Monster;
+import com.monster.domain.MonsterRepository;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.themes.ValoTheme;
+
+/* Create custom UI Components.
+ *
+ * Create your own Vaadin components by inheritance and composition.
+ * This is a form component inherited from VerticalLayout. Use
+ * Use BeanFieldGroup to bind data fields from DTO to UI fields.
+ * Similarly named field by naming convention or customized
+ * with @PropertyId annotation.
+ */
+@SpringComponent
+@UIScope
+public class MonsterForm extends FormLayout {
+
+    Button save = new Button("Save", this::save);
+    Button cancel = new Button("Cancel", this::cancel);
+    Button delete = new Button("Delete", this::delete);
+    TextField name = new TextField("Name");
+    TextArea description = new TextArea("Description");
+
+    Monster monster;
+    
+	@Autowired
+	private MonsterRepository monsterRepo;    
+
+    // Easily bind forms to beans and manage validation and buffering
+    BeanFieldGroup <Monster> formFieldBindings;
+
+    public MonsterForm() {
+        configureComponents();
+        buildLayout();
+    }
+
+    private void configureComponents() {
+        /* Highlight primary actions.
+         *
+         * With Vaadin built-in styles you can highlight the primary save button
+         * and give it a keyboard shortcut for a better UX.
+         */
+        save.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        setVisible(false);
+    }
+
+    private void buildLayout() {
+        setSizeUndefined();
+        setMargin(true);
+
+        HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
+        actions.setSpacing(true);
+
+		addComponents(actions, name, description);
+    }
+
+    /* Use any JVM language.
+     *
+     * Vaadin supports all languages supported by Java Virtual Machine 1.6+.
+     * This allows you to program user interface in Java 8, Scala, Groovy or any other
+     * language you choose.
+     * The new languages give you very powerful tools for organizing your code
+     * as you choose. For example, you can implement the listener methods in your
+     * compositions or in separate controller classes and receive
+     * to various Vaadin component events, like button clicks. Or keep it simple
+     * and compact with Lambda expressions.
+     */
+    public void save(Button.ClickEvent event) {
+        try {
+
+        	formFieldBindings.commit();
+        	//formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
+            monsterRepo.save(monster);
+
+			String msg = String.format("Saved '%s'.", monster.getName());
+            Notification.show(msg,Type.TRAY_NOTIFICATION);
+            refreshMonsterList();
+            name.setValue("");
+            description.setValue("");
+            setVisible(false);
+            
+        } catch (FieldGroup.CommitException e) {
+            // Validation exceptions could be shown here
+        }
+    }
+
+    public void cancel(Button.ClickEvent event) {
+    	setVisible(false);
+        Notification.show("Cancelled", Type.TRAY_NOTIFICATION);
+        refreshMonsterList();
+    }
+    
+    public void delete(Button.ClickEvent event) {
+    	monsterRepo.delete(monster);
+        Notification.show("Deleted",Type.TRAY_NOTIFICATION);    	
+        refreshMonsterList();  	
+    }
+
+    void edit(Monster monster) {
+        this.monster = monster;
+        if(monster != null) {
+            // Bind the properties of the monster POJO to fields in this form
+            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
+            name.focus();
+        }
+        delete.setVisible(true);
+        setVisible(monster != null);
+    }
+    
+    void add(Monster monster) {
+        this.monster = monster;
+        if(monster != null) {
+            // Bind the properties of the monster POJO to fields in this form
+            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
+            name.focus();
+        }
+        delete.setVisible(false);
+        setVisible(monster != null);
+    }
+    
+    private void refreshMonsterList() {
+        String filterValue = getUI().getFilter().getValue();
+		
+        if (filterValue == null || "".equals(filterValue)) {
+			getUI().listMonsters(null);  
+		} else {
+			getUI().listMonsters(filterValue);
+		}    	
+    }
+
+    @Override
+    public MonsterUI getUI() {
+        return (MonsterUI) super.getUI();
+    }
+
+}

@@ -69,6 +69,20 @@ public class MonsterEditor extends VerticalLayout {
 
 		void onChange();
 	}
+	
+	public final void addMonster() {
+		Monster m = new Monster("","");
+		delete.setVisible(false);
+		// Bind customer properties to similarly named fields
+		// Could also use annotation or "manual binding" or programmatically
+		// moving values from fields to entities before saving
+		BeanFieldGroup.bindFieldsUnbuffered(monster, this);
+		setVisible(true);
+		// A hack to ensure the whole form is visible
+		save.focus();
+		// Select all text in firstName field automatically
+		name.selectAll();		
+	}
 
 	public final void editMonster(Monster m) {
 		final boolean persisted = m.getId() != 0;
@@ -80,14 +94,8 @@ public class MonsterEditor extends VerticalLayout {
 			monster = m;
 		}
 		cancel.setVisible(persisted);
-
-		// Bind customer properties to similarly named fields
-		// Could also use annotation or "manual binding" or programmatically
-		// moving values from fields to entities before saving
 		BeanFieldGroup.bindFieldsUnbuffered(monster, this);
-
 		setVisible(true);
-
 		// A hack to ensure the whole form is visible
 		save.focus();
 		// Select all text in firstName field automatically
