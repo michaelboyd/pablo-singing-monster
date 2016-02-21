@@ -16,10 +16,6 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.monster.Application;
-import com.monster.domain.Island;
-import com.monster.domain.IslandRepository;
-import com.monster.domain.Monster;
-import com.monster.domain.MonsterRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class) 

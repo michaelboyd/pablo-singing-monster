@@ -1,5 +1,9 @@
 package com.monster.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -7,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -26,7 +31,9 @@ public class Monster {
     @JoinColumn(name="island_id")
     private Island island;
     
-    //Picture
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Image> images = new HashSet<Image>();    
+    
     //GIF
     //Song
     
