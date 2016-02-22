@@ -20,8 +20,8 @@ public class Island {
     private long id;	
     private String name;
     
-    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="island")
-    private List <Monster> monsters;
+//    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="island")
+//    private List <Monster> monsters;
 
 	public Island(String name) {
 		this.name = name;
@@ -35,20 +35,20 @@ public class Island {
 		return name;
 	}
 
-	public List<Monster> getMonsters() {
-		return monsters;
-	}
+//	public List<Monster> getMonsters() {
+//		return monsters;
+//	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Island [id=");
-		builder.append(id);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", monsters=");
-		builder.append(monsters);
-		builder.append("]");
-		return builder.toString();
-	}
+//	@Override
+//	public String toString() {
+//		StringBuilder builder = new StringBuilder();
+//		builder.append("Island [id=");
+//		builder.append(id);
+//		builder.append(", name=");
+//		builder.append(name);
+//		builder.append(", monsters=");
+//		builder.append(monsters);
+//		builder.append("]");
+//		return builder.toString();
+//	}
 }

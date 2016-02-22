@@ -21,12 +21,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.monster.image.utils.ImageSize;
 
 @Entity
-public class ImageFile {
-	
+public class ImageFile {  
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long id;	
-
+    private long id;
+	
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] file;
@@ -39,22 +39,15 @@ public class ImageFile {
     @NotNull
     @Enumerated
     private ImageSize imageSize;
-
-//    @NotNull
-//    @ManyToOne
-//    @JoinColumn(name = "image_id")
+    
+//    @ManyToOne(fetch=FetchType.LAZY)
+//    @JoinColumn(name="image_id")
 //    private Image image;
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Id: ").append(getId()).append(", ");
-        //sb.append("Artwork: ").append(getImage().getArtwork().getTitle());
-        return sb.toString();
-    }
-
-	public long getId() {
-		return id;
-	}
-    
-    
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("Id: ").append(getId()).append(", ");
+//        sb.append("Artwork: ").append(getImage().getArtwork().getTitle());
+//        return sb.toString();
+//    }
 }
