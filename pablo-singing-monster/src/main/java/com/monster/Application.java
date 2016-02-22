@@ -28,25 +28,29 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 
-	@Bean
+	//@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
 			
 			//islands
 			String islandNames[] = {"Monstro-city"};
 			
-			//monster names
-			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune"};
-
-			for(int i=0; i<monsterNames.length; i++) {
-				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {					
-					monsterRepo.save(new Monster(monsterNames[i], ""));
-				}
-			}
-			
 			for(int i=0; i<islandNames.length; i++) {
 				if(islandRepo.findByName(islandNames[i]).isEmpty()) {
 					islandRepo.save(new Island(islandNames[i]));
+				}
+			}
+			
+			Island island1 = islandRepo.findOne(1L);
+			
+			//monster names
+			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune"};
+			Monster m = null;
+			
+			for(int i=0; i<monsterNames.length; i++) {
+				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {
+					m = new Monster(monsterNames[i], "", island1);
+					monsterRepo.save(m);					
 				}
 			}
 			

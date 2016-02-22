@@ -4,9 +4,11 @@
 	<monster id="1"
 	           name="MonsterOne"
 	           description="this is the first monster"
+	           island_id="1"
 	           />
 	<monster id="2"
 	           name="MonsterTwo"
 	           description="this is the second monster"
+	           island_id="1"
 	           />           
 </dataset>

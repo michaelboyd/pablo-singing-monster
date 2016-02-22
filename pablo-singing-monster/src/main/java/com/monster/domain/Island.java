@@ -1,14 +1,14 @@
 package com.monster.domain;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 
 @Entity
 public class Island {
@@ -20,9 +20,9 @@ public class Island {
     private long id;	
     private String name;
     
-//    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="island")
-//    private List <Monster> monsters;
-
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Monster> monsters = new HashSet<Monster>();    
+    
 	public Island(String name) {
 		this.name = name;
 	}
@@ -35,20 +35,13 @@ public class Island {
 		return name;
 	}
 
-//	public List<Monster> getMonsters() {
-//		return monsters;
-//	}
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Island [id=").append(id).append(", name=").append(name).append("]");
+		return builder.toString();
+	}
 
-//	@Override
-//	public String toString() {
-//		StringBuilder builder = new StringBuilder();
-//		builder.append("Island [id=");
-//		builder.append(id);
-//		builder.append(", name=");
-//		builder.append(name);
-//		builder.append(", monsters=");
-//		builder.append(monsters);
-//		builder.append("]");
-//		return builder.toString();
-//	}
+	
+	
 }

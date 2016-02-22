@@ -64,7 +64,7 @@ public class MonsterUI extends UI {
 
 	private void configureComponents() {
 		
-		addNewBtn.addClickListener(e -> monsterForm.add(new Monster("","")));
+		addNewBtn.addClickListener(e -> monsterForm.add(new Monster("","", null)));
 
 		filter.setInputPrompt("Filter by Name");
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));

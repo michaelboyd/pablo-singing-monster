@@ -28,6 +28,7 @@ import com.monster.Application;
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
     TransactionalTestExecutionListener.class,
     DbUnitTestExecutionListener.class})
+@DatabaseSetup("classpath:test-island-records.xml")
 @DatabaseSetup("classpath:test-monster-records.xml")
 public class MonsterControllerTest_IT {
 	

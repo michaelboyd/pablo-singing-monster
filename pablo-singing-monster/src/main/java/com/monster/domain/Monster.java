@@ -1,14 +1,14 @@
 package com.monster.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Monster {
@@ -22,24 +22,20 @@ public class Monster {
     private String name;
     @Lob 
     private String description;
-    
-//    @ManyToOne(fetch=FetchType.LAZY)
-//    @JoinColumn(name="island_id")
-//    private Island island;
-     
-//    @OneToOne(fetch=FetchType.LAZY)
-//    @JoinColumn(name="picture_id")
-//    private Image picture;    
+
+    @NotNull
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name="island_id", nullable = true)
+    private Island island;
     
     //GIF
     //Song
     
-    public Monster(String name, String description) {
+    public Monster(String name, String description, Island island) {
 		this.name = name;
 		this.description = description;
+		this.island = island;
 	}
-
-
 	
 	public long getId() {
 		return id;
@@ -61,16 +57,23 @@ public class Monster {
 		this.description = description;
 	}
 
-//	public Island getIsland() {
-//		return island;
-//	}
-//
-//	public void setIsland(Island island) {
-//		this.island = island;
-//	}
+	public Island getIsland() {
+		return island;
+	}
 
-//	public Set<Image> getImages() {
-//		return images;
-//	}
+	public void setIsland(Island island) {
+		this.island = island;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Monster [id=").append(id).append(", name=").append(name).append(", island=").append(island)
+				.append("]");
+		return builder.toString();
+	}
+	
+	
+
 
 }
