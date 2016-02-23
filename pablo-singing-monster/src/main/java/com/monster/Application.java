@@ -33,7 +33,7 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 
-	//@Bean
+	@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
 			

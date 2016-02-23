@@ -42,13 +42,6 @@ public class MonsterUI extends UI {
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
 
-	// Show uploaded file in this placeholder
-	private final Embedded image = new Embedded("Uploaded Picture");
-	private ImageUploader receiver = new ImageUploader();	
-	// Create the upload with a caption and set receiver later
-	private Upload upload = new Upload("Upload Picture", receiver);
-	
-	
 	//discoverable beans
 	private final MonsterRepository repo;
 	private final MonsterForm monsterForm;
@@ -79,22 +72,11 @@ public class MonsterUI extends UI {
         
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
         
-        image.setVisible(false);
-        
-		upload.setButtonCaption("Start Upload");
-		upload.addSucceededListener(receiver);        
-        
 		listMonsters(null);
 		
 	}
 	
 	private void buildLayout() {
-		
-		// Put the components in a panel
-//		Panel imagePanel = new Panel("Cool Image Storage");
-//		Layout panelContent = new VerticalLayout();
-//		panelContent.addComponents(upload, image);
-//		imagePanel.setContent(panelContent);
 		
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
         actions.setWidth("100%");
@@ -105,9 +87,6 @@ public class MonsterUI extends UI {
         left.setSizeFull();
         monsterList.setSizeFull();
         left.setExpandRatio(monsterList, 1);
-        
-        monsterForm.addComponent(upload);
-        monsterForm.addComponent(image);
 
         HorizontalLayout mainLayout = new HorizontalLayout(left, monsterForm);
         mainLayout.setSizeFull();
@@ -131,46 +110,5 @@ public class MonsterUI extends UI {
 	TextField getFilter() {
 		return filter;
 	}
-	
-	class ImageUploader implements Receiver, SucceededListener {
 
-		public File file;
-
-		public OutputStream receiveUpload(String filename, String mimeType) {
-			// Create upload stream
-			FileOutputStream fos = null; // Stream to write to
-			try {
-				// Open the file for writing.
-				file = new File("/tmp/uploads/" + filename);
-				fos = new FileOutputStream(file);
-			} catch (final java.io.FileNotFoundException e) {
-				new Notification("Could not open file<br/>", e.getMessage(),
-						Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
-				return null;
-			}
-			return fos; // Return the output stream to write to
-		}
-
-		public void uploadSucceeded(SucceededEvent event) {
-			// Show the uploaded file in the image viewer
-			image.setVisible(true);
-			image.setSource(new FileResource(file));
-			//save picture here...
-			
-			Path path = Paths.get(file.getPath());
-			try {
-				byte[] file = Files.readAllBytes(path);
-				
-				Picture p = new Picture();
-				p.setFile(file);
-				
-				
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-			
-		}
-	};	
 }
