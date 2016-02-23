@@ -2,7 +2,11 @@ package com.monster.ui;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -20,9 +24,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
@@ -152,6 +154,16 @@ public class MonsterUI extends UI {
 			// Show the uploaded file in the image viewer
 			image.setVisible(true);
 			image.setSource(new FileResource(file));
+			//save picture here...
+			
+			Path path = Paths.get(file.getPath());
+			try {
+				byte[] file = Files.readAllBytes(path);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+			
 		}
 	};	
 }
