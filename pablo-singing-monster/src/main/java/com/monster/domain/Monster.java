@@ -70,6 +70,10 @@ public class Monster {
 	public void setIsland(Island island) {
 		this.island = island;
 	}
+	
+	public Set<Picture> getPictures() {
+		return pictures;
+	}
 
 	@Override
 	public String toString() {

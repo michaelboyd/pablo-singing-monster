@@ -1,5 +1,7 @@
 package com.monster;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
+import com.monster.domain.Picture;
 
 @SpringBootApplication
 public class Application {

@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.monster.image.utils.ImageSize;
 import com.monster.image.utils.ImageType;
 
 @Entity
@@ -30,9 +31,8 @@ public class Picture {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;	
     
-    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name="monster_id")
+    @JoinColumn(name="monster_id", nullable=true)
     private Monster monster;    
 
     @Lob
@@ -47,7 +47,7 @@ public class Picture {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ImageType imageType;
+    private ImageSize imageSize;
 
     @Transient
     public Long thumbImageId;
@@ -85,5 +85,23 @@ public class Picture {
 	public void setMonster(Monster monster) {
 		this.monster = monster;
 	}
+
+	public ImageSize getImageSize() {
+		return imageSize;
+	}
+
+	public void setImageSize(ImageSize imageSize) {
+		this.imageSize = imageSize;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	
+	
 	
 }
