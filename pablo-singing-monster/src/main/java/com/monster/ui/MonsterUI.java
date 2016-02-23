@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
+import com.monster.domain.Picture;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FileResource;
@@ -159,6 +160,12 @@ public class MonsterUI extends UI {
 			Path path = Paths.get(file.getPath());
 			try {
 				byte[] file = Files.readAllBytes(path);
+				
+				Picture p = new Picture();
+				p.setFile(file);
+				
+				
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

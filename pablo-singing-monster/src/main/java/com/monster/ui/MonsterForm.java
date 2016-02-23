@@ -120,5 +120,9 @@ public class MonsterForm extends FormLayout {
     public MonsterUI getUI() {
         return (MonsterUI) super.getUI();
     }
-
+    
+    protected Monster getMonster() {
+    	return monster;
+    }
+    
 }

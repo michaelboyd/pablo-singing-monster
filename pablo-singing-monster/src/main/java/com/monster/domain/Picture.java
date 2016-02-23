@@ -68,7 +68,13 @@ public class Picture {
 	public Long getFullSizeImageId() {
 		return fullSizeImageId;
 	}
-    
-    
+
+	public byte[] getFile() {
+		return file;
+	}
+
+	public void setFile(byte[] file) {
+		this.file = file;
+	}
     
 }
