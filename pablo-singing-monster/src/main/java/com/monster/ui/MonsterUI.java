@@ -40,10 +40,10 @@ public class MonsterUI extends UI {
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
 
 	// Show uploaded file in this placeholder
-	private final Embedded image = new Embedded("Uploaded Image");
+	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
 	// Create the upload with a caption and set receiver later
-	private Upload upload = new Upload("Upload Image Here", receiver);
+	private Upload upload = new Upload("Upload Picture", receiver);
 	
 	
 	//discoverable beans
@@ -88,20 +88,23 @@ public class MonsterUI extends UI {
 	private void buildLayout() {
 		
 		// Put the components in a panel
-		Panel imagePanel = new Panel("Cool Image Storage");
-		Layout panelContent = new VerticalLayout();
-		panelContent.addComponents(upload, image);
-		imagePanel.setContent(panelContent);
+//		Panel imagePanel = new Panel("Cool Image Storage");
+//		Layout panelContent = new VerticalLayout();
+//		panelContent.addComponents(upload, image);
+//		imagePanel.setContent(panelContent);
 		
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
         actions.setWidth("100%");
         filter.setWidth("100%");
         actions.setExpandRatio(filter, 1);
 
-        VerticalLayout left = new VerticalLayout(actions, monsterList, imagePanel);
+        VerticalLayout left = new VerticalLayout(actions, monsterList);
         left.setSizeFull();
         monsterList.setSizeFull();
         left.setExpandRatio(monsterList, 1);
+        
+        monsterForm.addComponent(upload);
+        monsterForm.addComponent(image);
 
         HorizontalLayout mainLayout = new HorizontalLayout(left, monsterForm);
         mainLayout.setSizeFull();
