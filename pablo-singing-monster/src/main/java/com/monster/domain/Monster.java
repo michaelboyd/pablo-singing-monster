@@ -1,5 +1,8 @@
 package com.monster.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Monster {
@@ -23,10 +26,12 @@ public class Monster {
     @Lob 
     private String description;
 
-    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name="island_id", nullable = true)
+    @JoinColumn(name="island_id", nullable=true)
     private Island island;
+    
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Picture> pictures = new HashSet<Picture>();    
     
     //GIF
     //Song
@@ -74,6 +79,4 @@ public class Monster {
 	}
 	
 	
-
-
 }

@@ -23,15 +23,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.monster.image.utils.ImageType;
 
 @Entity
-public class Image { 
+public class Picture { 
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;	
     
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="image_id", nullable = true)
-    private Image picture;    
+    @JoinColumn(name="picture_id", nullable = true)
+    private Picture picture;    
 
     @Lob
     @Basic(fetch = FetchType.LAZY)

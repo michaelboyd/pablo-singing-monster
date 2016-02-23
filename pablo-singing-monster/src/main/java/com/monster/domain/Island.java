@@ -5,10 +5,11 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Island {
@@ -20,7 +21,7 @@ public class Island {
     private long id;	
     private String name;
     
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<Monster> monsters = new HashSet<Monster>();    
     
 	public Island(String name) {
@@ -33,6 +34,10 @@ public class Island {
 
 	public String getName() {
 		return name;
+	}
+	
+	public Set<Monster> getMonsters() {
+		return monsters;
 	}
 
 	@Override

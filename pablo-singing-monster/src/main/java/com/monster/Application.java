@@ -1,5 +1,8 @@
 package com.monster;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,7 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 
-	//@Bean
+	@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
 			
@@ -50,9 +53,13 @@ public class Application {
 			for(int i=0; i<monsterNames.length; i++) {
 				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {
 					m = new Monster(monsterNames[i], "", island1);
-					monsterRepo.save(m);					
+					monsterRepo.save(m);
+					island1.getMonsters().add(m);
 				}
 			}
+			
+			//persist the island to update monsters
+			islandRepo.save(island1);
 			
 			log.info("Monsters found with findAll():");
 			log.info("-------------------------------");
