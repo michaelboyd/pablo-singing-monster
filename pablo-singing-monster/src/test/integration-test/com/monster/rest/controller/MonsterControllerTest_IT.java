@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.TestRestTemplate;
@@ -24,10 +23,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.monster.Application;
+import com.monster.BaseTest;
 import com.monster.domain.Island;
-import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
-import com.monster.domain.MonsterRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -36,34 +34,9 @@ import com.monster.domain.MonsterRepository;
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
     TransactionalTestExecutionListener.class,
     DbUnitTestExecutionListener.class})
-public class MonsterControllerTest_IT {
+public class MonsterControllerTest_IT extends BaseTest{
 
-	@Autowired
-	private MonsterRepository monsterRepo;
-	
-	@Autowired
-	private IslandRepository islandRepo;	
-	
 	RestTemplate template = new TestRestTemplate();
-	
-	@Before
-	public void createRecords() {
-		System.out.println("before");
-		Island island = new Island("IslandOne");
-		islandRepo.save(island);
-		Monster monster = new Monster("MonsterOne", "", island);
-		monsterRepo.save(monster);
-		island.getMonsters().add(monster);
-		islandRepo.save(island);
-	}
-	
-	@After
-	public void destroyRecords() {
-		System.out.println("after");
-		List <Island> islands = islandRepo.findByName("IslandOne");
-		Island island = islands.get(0);
-		islandRepo.delete(island);
-	}	
 	
 	@Test
 	public void findMonsterById() {

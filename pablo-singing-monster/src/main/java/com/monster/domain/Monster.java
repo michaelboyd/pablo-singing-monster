@@ -31,8 +31,8 @@ public class Monster {
     @JoinColumn(name="island_id", nullable=true)
     private Island island;
     
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    private Set<Picture> pictures = new HashSet<Picture>();    
+//    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+//    private Set<Picture> pictures = new HashSet<Picture>();    
     
     //GIF
     //Song
@@ -71,9 +71,9 @@ public class Monster {
 		this.island = island;
 	}
 	
-	public Set<Picture> getPictures() {
-		return pictures;
-	}
+//	public Set<Picture> getPictures() {
+//		return pictures;
+//	}
 
 	@Override
 	public String toString() {
