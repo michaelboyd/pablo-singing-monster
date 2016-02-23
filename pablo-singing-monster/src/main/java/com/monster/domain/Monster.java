@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,8 +31,8 @@ public class Monster {
     @JoinColumn(name="island_id", nullable=true)
     private Island island;
     
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<Picture> pictures = new HashSet<Picture>();    
+//    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+//    private Set<Picture> pictures = new HashSet<Picture>();    
     
     //GIF
     //Song

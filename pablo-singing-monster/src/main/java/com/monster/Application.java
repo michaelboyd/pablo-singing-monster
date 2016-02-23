@@ -1,7 +1,6 @@
 package com.monster;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ public class Application {
 				}
 			}
 			
-			Island island1 = islandRepo.findOne(1L);
+			Island island1 = (Island)((List)islandRepo.findByName("Monstro-city")).get(0);
 			
 			//monster names
 			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune"};

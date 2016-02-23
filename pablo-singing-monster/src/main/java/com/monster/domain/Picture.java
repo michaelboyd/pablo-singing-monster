@@ -3,6 +3,7 @@ package com.monster.domain;
 import java.util.Date;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -29,8 +30,8 @@ public class Picture {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;	
     
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="picture_id", nullable = true)
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name="monster_id", nullable = true)
     private Picture picture;    
 
     @Lob

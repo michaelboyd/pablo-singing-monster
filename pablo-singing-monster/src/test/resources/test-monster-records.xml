@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <dataset>
-	<monster id="1"
+	<monster id="1001"
 	           name="MonsterOne"
 	           description="this is the first monster"
-	           island_id="1"
+	           island_id="1000"
 	           />
-	<monster id="2"
-	           name="MonsterTwo"
-	           description="this is the second monster"
-	           island_id="1"
-	           />           
 </dataset>

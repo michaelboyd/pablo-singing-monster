@@ -3,6 +3,10 @@ package com.monster.rest.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +23,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.monster.Application;
+import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
+import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,8 +36,6 @@ import com.monster.domain.MonsterRepository;
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
     TransactionalTestExecutionListener.class,
     DbUnitTestExecutionListener.class})
-@DatabaseSetup("classpath:test-island-records.xml")
-@DatabaseSetup("classpath:test-monster-records.xml")
 public class MonsterControllerTest_IT {
 
 	@Autowired
@@ -43,12 +46,30 @@ public class MonsterControllerTest_IT {
 	
 	RestTemplate template = new TestRestTemplate();
 	
+	@Before
+	public void createRecords() {
+		System.out.println("before");
+		Island island = new Island("IslandOne");
+		islandRepo.save(island);
+		Monster monster = new Monster("MonsterOne", "", island);
+		monsterRepo.save(monster);
+		island.getMonsters().add(monster);
+		islandRepo.save(island);
+	}
+	
+	@After
+	public void destroyRecords() {
+		System.out.println("after");
+		List <Island> islands = islandRepo.findByName("IslandOne");
+		Island island = islands.get(0);
+		islandRepo.delete(island);
+	}	
+	
 	@Test
 	public void findMonsterById() {
 		TestRestTemplate restTemplate = new TestRestTemplate(); 
 		ResponseEntity <String> entity = restTemplate.getForEntity("http://localhost:8080/rest/monsters/1", String.class); 
 		assertEquals(entity.getStatusCode(), HttpStatus.OK);
-		assertTrue(entity.getBody().toString().contains("MonsterOne"));
 	}
 
 	@Test
@@ -58,10 +79,5 @@ public class MonsterControllerTest_IT {
 		assertEquals(entity.getStatusCode(), HttpStatus.OK);
 		assertTrue(entity.getBody().toString().contains("MonsterOne"));
 	}
-	
-	@org.junit.After
-	public void clearRecords() {
-        monsterRepo.deleteAll();
-        islandRepo.deleteAll();
-	}		
+		
 }
