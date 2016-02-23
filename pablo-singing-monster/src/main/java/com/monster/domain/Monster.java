@@ -1,13 +1,18 @@
 package com.monster.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Monster {
@@ -26,8 +31,8 @@ public class Monster {
     @JoinColumn(name="island_id", nullable=true)
     private Island island;
     
-//    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-//    private Set<Picture> pictures = new HashSet<Picture>();    
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    private Set<Picture> pictures = new HashSet<Picture>();    
     
     //GIF
     //Song

@@ -30,13 +30,14 @@ public class Picture {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;	
     
+    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name="monster_id", nullable = true)
-    private Picture picture;    
+    @JoinColumn(name="monster_id")
+    private Monster monster;    
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Transient
+    @NotNull
     private byte[] file;
 
     @NotNull
@@ -76,5 +77,13 @@ public class Picture {
 	public void setFile(byte[] file) {
 		this.file = file;
 	}
-    
+
+	public Monster getMonster() {
+		return monster;
+	}
+
+	public void setMonster(Monster monster) {
+		this.monster = monster;
+	}
+	
 }
