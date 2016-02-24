@@ -45,19 +45,16 @@ import com.vaadin.ui.themes.ValoTheme;
 @UIScope
 public class MonsterForm extends FormLayout {
 
-    Button save = new Button("Save", this::save);
-    Button cancel = new Button("Cancel", this::cancel);
-    Button delete = new Button("Delete", this::delete);
-    TextField name = new TextField("Name");
-    TextArea description = new TextArea("Description");
-    
-	// Show uploaded file in this placeholder
+    private Button save = new Button("Save", this::save);
+    private Button cancel = new Button("Cancel", this::cancel);
+    private Button delete = new Button("Delete", this::delete);
+    private TextField name = new TextField("Name");
+    private TextArea description = new TextArea("Description");
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
-	// Create the upload with a caption and set receiver later
 	private Upload upload = new Upload("Upload Picture", receiver);    
 
-    Monster monster;
+    private Monster monster;
     byte[] fileData;
     
 	@Autowired
@@ -126,7 +123,6 @@ public class MonsterForm extends FormLayout {
     void edit(Monster monster) {
         this.monster = monster;
         if(monster != null) {
-            // Bind the properties of the monster POJO to fields in this form
             formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
             name.focus();
         }
@@ -163,6 +159,7 @@ public class MonsterForm extends FormLayout {
             name.focus();
         }
         delete.setVisible(false);
+        upload.setVisible(false);
         setVisible(monster != null);
         showOrHidePicture(null);
     }
@@ -189,7 +186,7 @@ public class MonsterForm extends FormLayout {
 		public OutputStream receiveUpload(String filename, String mimeType) {
 			FileOutputStream fos = null;
 			try {
-				file = new File("/tmp/uploads/" + filename);
+				file = new File("tmp/uploads/" + filename);
 				fos = new FileOutputStream(file);
 			} catch (final java.io.FileNotFoundException e) {
 				new Notification("Could not open file", e.getMessage(),
@@ -197,11 +194,10 @@ public class MonsterForm extends FormLayout {
 						.show(Page.getCurrent());
 				return null;
 			}
-			return fos; // Return the output stream to write to
+			return fos;
 		}
 
 		public void uploadSucceeded(SucceededEvent event) {
-			//this is the first chance to access the file since being uploaded
 			Path path = Paths.get(file.getPath());
 			Picture picture = null;
 			try {
@@ -218,25 +214,17 @@ public class MonsterForm extends FormLayout {
 				e.printStackTrace();
 			}
 			
-			//now that the image is saved use the picture file bytes to source the image component
-			if(picture != null) {
-				StreamResource.StreamSource imagesource = new MyImageSource (picture.getFile());
-				image.setVisible(true);
-				image.setSource(new StreamResource(imagesource, "myimage.png")); //image name is arbitrary as this image is dynamically created
-			}
+			showOrHidePicture(picture);
 		}
 	};	
 	
 	public class MyImageSource implements StreamResource.StreamSource {
-		
-		byte file[] = null;
-		
+
+		private byte file[] = null;
+
 		public MyImageSource(byte file[]) {
 			this.file = file;
 		}
-
-		ByteArrayOutputStream imagebuffer = null;
-		int reloads = 0;
 
 		public InputStream getStream() {
 			try {
