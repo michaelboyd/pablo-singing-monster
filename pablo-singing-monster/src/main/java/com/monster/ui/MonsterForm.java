@@ -1,7 +1,6 @@
 package com.monster.ui;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.image.utils.ImageSize;
+import com.monster.service.PictureService;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.event.ShortcutAction;
@@ -62,6 +62,9 @@ public class MonsterForm extends FormLayout {
 	
 	@Autowired
 	public PictureRepository pictureRepo;	
+	
+	@Autowired
+	public PictureService pictureService;
 
     private BeanFieldGroup <Monster> formFieldBindings;
 
@@ -128,12 +131,7 @@ public class MonsterForm extends FormLayout {
         }
         delete.setVisible(true);
         setVisible(monster != null);
-
-        List <Picture> pictures = pictureRepo.findByMonster(monster);
-        Picture picture = null;
-        if(!pictures.isEmpty()) {
-            picture = pictures.get(0);
-        }
+        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
         if(monster != null) {
         	showOrHidePicture(picture);
         }
@@ -146,6 +144,7 @@ public class MonsterForm extends FormLayout {
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, "myimage.png"));
 		} else {
+			upload.setVisible(true);
 			image.setVisible(false);
 			image.setSource(null);
 		}		
@@ -202,14 +201,18 @@ public class MonsterForm extends FormLayout {
 			Picture picture = null;
 			try {
 				byte[] fileData = Files.readAllBytes(path);
-	            if(fileData != null && fileData.length > 0) {
-	        		picture = new Picture();
-	        		picture.setMonster(monster);
-	        		picture.setImageSize(ImageSize.big);
-	        		picture.setCreateDate(new Date());
-	       			picture.setFile(fileData);
-	        		pictureRepo.save(picture);            	
-	            }				
+				
+				//call the picture service here
+				pictureService.saveImage(monster, fileData, pictureRepo);
+				
+//	            if(fileData != null && fileData.length > 0) {
+//	        		picture = new Picture();
+//	        		picture.setMonster(monster);
+//	        		picture.setImageSize(ImageSize.big);
+//	        		picture.setCreateDate(new Date());
+//	       			picture.setFile(fileData);
+//	        		pictureRepo.save(picture);            	
+//	            }				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

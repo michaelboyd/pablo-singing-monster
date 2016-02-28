@@ -19,6 +19,7 @@ import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.image.utils.ImageSize;
+import com.monster.service.PictureService;
 
 public class BaseTest {
 	
@@ -29,7 +30,10 @@ public class BaseTest {
 	public IslandRepository islandRepo;
 	
 	@Autowired
-	public PictureRepository pictureRepo;	
+	public PictureRepository pictureRepo;
+	
+	@Autowired
+	public PictureService pictureService;
 	
 	@Before
 	public void createRecords() {
@@ -55,18 +59,13 @@ public class BaseTest {
 		byte[] file = null;
 		try {
 			file = Files.readAllBytes(path);
+			pictureService.saveImage(monster, file, pictureRepo);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
 		if(file != null) {
 			picture.setFile(file);
 		}
-		pictureRepo.save(picture);
-
-		//having issues here
-		//save the picture back on the monster
-		//monster.getPictures().add(picture);
-		//monsterRepo.save(monster);
 
 	}
 	
@@ -76,10 +75,8 @@ public class BaseTest {
 		Island island = islands.get(0);		
 		Set <Monster> monsters = island.getMonsters();
 		for(Monster monster : monsters) {
-			List <Picture> pictures = pictureRepo.findByMonster(monster);
-			for(Picture picture : pictures) {
-				pictureRepo.delete(picture);
-			}
+			Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+			pictureRepo.delete(picture);
  		}
 		islandRepo.delete(island);
 	}
