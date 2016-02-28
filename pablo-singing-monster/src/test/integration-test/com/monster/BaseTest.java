@@ -50,11 +50,6 @@ public class BaseTest {
 		islandRepo.save(island);
 		
 		//save the picture
-		Picture picture = new Picture();
-		//set required fields
-		picture.setMonster(monster);
-		picture.setImageSize(ImageSize.big);
-		picture.setCreateDate(new Date());
 		Path path = Paths.get("test-image/test.jpg");
 		byte[] file = null;
 		try {
@@ -63,10 +58,6 @@ public class BaseTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
-		if(file != null) {
-			picture.setFile(file);
-		}
-
 	}
 	
 	@After
@@ -75,8 +66,10 @@ public class BaseTest {
 		Island island = islands.get(0);		
 		Set <Monster> monsters = island.getMonsters();
 		for(Monster monster : monsters) {
-			Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
-			pictureRepo.delete(picture);
+			List <Picture> pictures = pictureRepo.findByMonster(monster);
+			for(Picture picture : pictures) {
+				pictureRepo.delete(picture);
+			}
  		}
 		islandRepo.delete(island);
 	}
