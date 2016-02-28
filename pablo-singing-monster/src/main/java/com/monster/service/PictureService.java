@@ -12,7 +12,6 @@ import javax.media.jai.JAI;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,7 @@ public class PictureService {
     private static final String JAI_SUBSAMPLE_AVERAGE_ACTION = "SubsampleAverage";
     private static final String JAI_ENCODE_FORMAT_JPEG = "JPEG";
     private static final String JAI_ENCODE_ACTION = "encode";
-    private static final String JPEG_CONTENT_TYPE = "image/jpeg";
+    //private static final String JPEG_CONTENT_TYPE = "image/jpeg";
     
     /**
     * this gets rid of exception for not using native acceleration
@@ -45,15 +44,10 @@ public class PictureService {
     	System.setProperty("com.sun.media.jai.disableMediaLib", "true");
     } 	
     
-//	@Autowired
-//	public static PictureRepository pictureRepo;
-	
 	@Value("${image_full_max_width}")
 	private static int maxWidthFull;
-
 	@Value("${image_big_max_width}")
     private static int maxWidthBig;
-	
 	@Value("${image_thumb_max_width}")
 	private static int maxWidthThumb;	
 	

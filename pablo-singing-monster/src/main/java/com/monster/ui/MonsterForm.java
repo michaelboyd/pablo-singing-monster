@@ -9,8 +9,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,10 +57,8 @@ public class MonsterForm extends FormLayout {
     
 	@Autowired
 	private MonsterRepository monsterRepo;    
-	
 	@Autowired
 	public PictureRepository pictureRepo;	
-	
 	@Autowired
 	public PictureService pictureService;
 
@@ -201,18 +197,7 @@ public class MonsterForm extends FormLayout {
 			Picture picture = null;
 			try {
 				byte[] fileData = Files.readAllBytes(path);
-				
-				//call the picture service here
 				pictureService.saveImage(monster, fileData, pictureRepo);
-				
-//	            if(fileData != null && fileData.length > 0) {
-//	        		picture = new Picture();
-//	        		picture.setMonster(monster);
-//	        		picture.setImageSize(ImageSize.big);
-//	        		picture.setCreateDate(new Date());
-//	       			picture.setFile(fileData);
-//	        		pictureRepo.save(picture);            	
-//	            }				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
