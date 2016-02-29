@@ -146,9 +146,9 @@ public class MonsterForm extends FormLayout {
             name.focus();
         }
         delete.setVisible(false);
-        upload.setVisible(false);
         setVisible(monster != null);
         showOrHidePicture(null);
+        upload.setVisible(false);
     }
     
     private void refreshMonsterList() {
@@ -223,9 +223,11 @@ public class MonsterForm extends FormLayout {
 			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));
+			upload.setVisible(false);
 		} else {
 			image.setVisible(false);
 			image.setSource(null);
+			upload.setVisible(true);
 		}		
     }	
 }
