@@ -1,5 +1,6 @@
 package com.monster.domain;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.persistence.Basic;
@@ -48,26 +49,16 @@ public class Picture {
     @NotNull
     @Enumerated(EnumType.STRING)
     private ImageSize imageSize;
-
-    @Transient
-    public Long thumbImageId;
-
-    @Transient
-    public Long bigImageId;
-
-    @Transient
-    public Long fullSizeImageId;
-
-	public Long getThumbImageId() {
-		return thumbImageId;
+    
+    @NotNull
+    private String fileName;
+    
+	public String getFileName() {
+		return fileName;
 	}
 
-	public Long getBigImageId() {
-		return bigImageId;
-	}
-
-	public Long getFullSizeImageId() {
-		return fullSizeImageId;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	public byte[] getFile() {
@@ -100,6 +91,25 @@ public class Picture {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Picture [id=");
+		builder.append(id);
+		builder.append(", monster=");
+		builder.append(monster);
+		builder.append(", file=");
+		builder.append(Arrays.toString(file));
+		builder.append(", createDate=");
+		builder.append(createDate);
+		builder.append(", imageSize=");
+		builder.append(imageSize);
+		builder.append(", fileName=");
+		builder.append(fileName);
+		builder.append("]");
+		return builder.toString();
 	}
 	
 	

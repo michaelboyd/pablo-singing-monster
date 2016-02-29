@@ -1,6 +1,7 @@
 package com.monster.ui;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +20,6 @@ import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.image.utils.ImageSize;
-import com.monster.service.PictureService;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.event.ShortcutAction;
@@ -57,10 +59,9 @@ public class MonsterForm extends FormLayout {
     
 	@Autowired
 	private MonsterRepository monsterRepo;    
+	
 	@Autowired
 	public PictureRepository pictureRepo;	
-	@Autowired
-	public PictureService pictureService;
 
     private BeanFieldGroup <Monster> formFieldBindings;
 
@@ -127,7 +128,12 @@ public class MonsterForm extends FormLayout {
         }
         delete.setVisible(true);
         setVisible(monster != null);
-        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+
+        List <Picture> pictures = pictureRepo.findByMonster(monster);
+        Picture picture = null;
+        if(!pictures.isEmpty()) {
+            picture = pictures.get(0);
+        }
         if(monster != null) {
         	showOrHidePicture(picture);
         }
@@ -138,9 +144,8 @@ public class MonsterForm extends FormLayout {
 		if (picture != null) {
 			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
 			image.setVisible(true);
-			image.setSource(new StreamResource(imagesource, "myimage.png"));
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));
 		} else {
-			upload.setVisible(true);
 			image.setVisible(false);
 			image.setSource(null);
 		}		
@@ -197,7 +202,15 @@ public class MonsterForm extends FormLayout {
 			Picture picture = null;
 			try {
 				byte[] fileData = Files.readAllBytes(path);
-				pictureService.saveImage(monster, fileData, pictureRepo);
+	            if(fileData != null && fileData.length > 0) {
+	        		picture = new Picture();
+	        		picture.setMonster(monster);
+	        		picture.setImageSize(ImageSize.big);
+	        		picture.setCreateDate(new Date());
+	       			picture.setFile(fileData);
+	       			picture.setFileName(event.getFilename());
+	        		pictureRepo.save(picture);            	
+	            }				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

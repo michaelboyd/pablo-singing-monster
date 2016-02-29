@@ -19,7 +19,6 @@ import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.image.utils.ImageSize;
-import com.monster.service.PictureService;
 
 public class BaseTest {
 	
@@ -30,10 +29,7 @@ public class BaseTest {
 	public IslandRepository islandRepo;
 	
 	@Autowired
-	public PictureRepository pictureRepo;
-	
-	@Autowired
-	public PictureService pictureService;
+	public PictureRepository pictureRepo;	
 	
 	@Before
 	public void createRecords() {
@@ -50,14 +46,28 @@ public class BaseTest {
 		islandRepo.save(island);
 		
 		//save the picture
+		Picture picture = new Picture();
+		//set required fields
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.big);
+		picture.setCreateDate(new Date());
 		Path path = Paths.get("test-image/test.jpg");
 		byte[] file = null;
 		try {
 			file = Files.readAllBytes(path);
-			pictureService.saveImage(monster, file, pictureRepo);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
+		if(file != null) {
+			picture.setFile(file);
+		}
+		pictureRepo.save(picture);
+
+		//having issues here
+		//save the picture back on the monster
+		//monster.getPictures().add(picture);
+		//monsterRepo.save(monster);
+
 	}
 	
 	@After
