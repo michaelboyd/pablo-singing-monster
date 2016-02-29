@@ -1,7 +1,6 @@
 package com.monster.ui;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.image.utils.ImageSize;
+import com.monster.service.PictureService;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.event.ShortcutAction;
@@ -61,7 +61,10 @@ public class MonsterForm extends FormLayout {
 	private MonsterRepository monsterRepo;    
 	
 	@Autowired
-	public PictureRepository pictureRepo;	
+	public PictureRepository pictureRepo;
+	
+	@Autowired
+	public PictureService pictureService;
 
     private BeanFieldGroup <Monster> formFieldBindings;
 

@@ -12,8 +12,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import com.monster.domain.Monster;
 import com.monster.domain.Picture;
@@ -23,8 +23,10 @@ import com.sun.media.jai.codec.SeekableStream;
 import com.vaadin.spring.annotation.SpringComponent;
 
 @SpringComponent
-@Service
 public class PictureService {
+	
+	@Autowired
+	public PictureRepository pictureRepo;	
 	
 	/**
 	 * the following is from
@@ -51,7 +53,7 @@ public class PictureService {
 	@Value("${image_thumb_max_width}")
 	private static int maxWidthThumb;	
 	
-	public void saveImage(Monster monster, byte[] file, PictureRepository pictureRepo) {	
+	public void saveImage(Monster monster, byte[] file) {	
 	
 		try
 		{
