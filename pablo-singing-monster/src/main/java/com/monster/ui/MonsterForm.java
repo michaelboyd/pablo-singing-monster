@@ -131,27 +131,11 @@ public class MonsterForm extends FormLayout {
         }
         delete.setVisible(true);
         setVisible(monster != null);
-
-        List <Picture> pictures = pictureRepo.findByMonster(monster);
-        Picture picture = null;
-        if(!pictures.isEmpty()) {
-            picture = pictures.get(0);
-        }
+        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
         if(monster != null) {
         	showOrHidePicture(picture);
         }
         
-    }
-    
-    private void showOrHidePicture(Picture picture) {
-		if (picture != null) {
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
-			image.setVisible(true);
-			image.setSource(new StreamResource(imagesource, picture.getFileName()));
-		} else {
-			image.setVisible(false);
-			image.setSource(null);
-		}		
     }
     
     void add(Monster monster) {
@@ -206,21 +190,16 @@ public class MonsterForm extends FormLayout {
 			try {
 				byte[] fileData = Files.readAllBytes(path);
 	            if(fileData != null && fileData.length > 0) {
-	        		picture = new Picture();
-	        		picture.setMonster(monster);
-	        		picture.setImageSize(ImageSize.big);
-	        		picture.setCreateDate(new Date());
-	       			picture.setFile(fileData);
-	       			picture.setFileName(event.getFilename());
-	        		pictureRepo.save(picture);            	
+	            	pictureService.savePicture(monster, fileData, event.getFilename());
 	            }				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
+			picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
 			showOrHidePicture(picture);
 		}
-	};	
+	}	
 	
 	public class MyImageSource implements StreamResource.StreamSource {
 
@@ -237,5 +216,16 @@ public class MonsterForm extends FormLayout {
 				return null;
 			}
 		}
-	}	
+	}
+	
+    private void showOrHidePicture(Picture picture) {
+		if (picture != null) {
+			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			image.setVisible(true);
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));
+		} else {
+			image.setVisible(false);
+			image.setSource(null);
+		}		
+    }	
 }

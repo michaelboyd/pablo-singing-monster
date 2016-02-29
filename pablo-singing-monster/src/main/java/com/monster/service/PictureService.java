@@ -46,45 +46,49 @@ public class PictureService {
     	System.setProperty("com.sun.media.jai.disableMediaLib", "true");
     } 	
     
-	@Value("${image_full_max_width}")
-	private static int maxWidthFull;
-	@Value("${image_big_max_width}")
-    private static int maxWidthBig;
-	@Value("${image_thumb_max_width}")
-	private static int maxWidthThumb;	
+	private int maxWidthFull;
+    private int maxWidthBig;
+	private int maxWidthThumb;	
 	
-	public void saveImage(Monster monster, byte[] file) {	
+	@Autowired
+	public PictureService(@Value("${image_full_max_width}") int maxWidthFull,
+			@Value("${image_big_max_width}") int maxWidthBig,
+			@Value("${image_thumb_max_width}") int maxWidthThumb) {
+		this.maxWidthFull = maxWidthFull;
+		this.maxWidthBig = maxWidthBig;
+		this.maxWidthThumb = maxWidthThumb;
+	}
 	
-		try
-		{
-			//full size file
-			Picture fullSizeFile = new Picture();
-			fullSizeFile.setCreateDate(new Date());
-			fullSizeFile.setFile(resizeImageAsJPG(file, maxWidthFull));
-			fullSizeFile.setImageSize(ImageSize.fullSize);
-			fullSizeFile.setMonster(monster);
-			pictureRepo.save(fullSizeFile); 
-			
-			//big file
-			Picture bigFile = new Picture();
-			bigFile.setCreateDate(new Date());
-			bigFile.setFile(resizeImageAsJPG(file, maxWidthBig));
-			bigFile.setImageSize(ImageSize.big);
-			bigFile.setMonster(monster);
-			pictureRepo.save(bigFile);
-			
-			//thumb file
-			Picture thumbFile = new Picture();
-			thumbFile.setCreateDate(new Date());
-			thumbFile.setFile(resizeImageAsJPG(file, maxWidthThumb));
-			thumbFile.setImageSize(ImageSize.thumb);
-			thumbFile.setMonster(monster);
-			pictureRepo.save(thumbFile);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}		
+	public void savePicture(Monster monster, byte[] fileData, String fileName) {	
+		
+		Picture picture = null;
+		
+		//thumb file
+		picture = new Picture();
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.thumb);
+		picture.setCreateDate(new Date());
+		picture.setFile(resizeImageAsJPG(fileData, maxWidthThumb));
+		picture.setFileName(fileName);
+		pictureRepo.save(picture); 	
+		
+		//big file
+		picture = new Picture();
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.big);
+		picture.setCreateDate(new Date());
+		picture.setFile(resizeImageAsJPG(fileData, maxWidthBig));
+		picture.setFileName(fileName);
+		pictureRepo.save(picture);		
+		
+		//full size file
+		picture = new Picture();
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.fullSize);
+		picture.setCreateDate(new Date());
+		picture.setFile(resizeImageAsJPG(fileData, maxWidthFull));
+		picture.setFileName(fileName);
+		pictureRepo.save(picture);		
 		
 	}
 	

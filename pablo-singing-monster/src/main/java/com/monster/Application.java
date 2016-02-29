@@ -49,7 +49,7 @@ public class Application {
 			Island island1 = (Island)((List)islandRepo.findByName("Monstro-city")).get(0);
 			
 			//monster names
-			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune"};
+			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune", "Peacemaker"};
 			Monster m = null;
 			
 			for(int i=0; i<monsterNames.length; i++) {
