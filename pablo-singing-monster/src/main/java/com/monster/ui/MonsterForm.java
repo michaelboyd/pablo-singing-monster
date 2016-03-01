@@ -32,9 +32,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Select;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
@@ -56,7 +56,7 @@ public class MonsterForm extends FormLayout {
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);   
-	private ListSelect island = new ListSelect("Islands");
+	private Select island = new Select("Islands");
 
     private Monster monster;
     byte[] fileData;
@@ -97,7 +97,7 @@ public class MonsterForm extends FormLayout {
         HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-		addComponents(actions, name, description, island, upload, image, pictureAction);
+		addComponents(name, description, island, upload, image, pictureAction, actions);
     }
 
     public void save(Button.ClickEvent event) {
@@ -150,6 +150,7 @@ public class MonsterForm extends FormLayout {
         Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
         if(monster != null) {
         	showOrHidePicture(picture);
+        	island.setValue(monster.getIsland());
         }
     }
     
@@ -158,7 +159,7 @@ public class MonsterForm extends FormLayout {
         	island.addItem(i);
         }
         island.setNullSelectionAllowed(false);
-        island.setRows(3);
+        //island.setRows(3);
     }
     
     void add(Monster monster) {
