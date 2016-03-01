@@ -25,8 +25,8 @@ public class Island {
     @NotNull    
     private String name;
     
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    private Set<Monster> monsters = new HashSet<Monster>();    
+//    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+//    private Set<Monster> monsters = new HashSet<Monster>();    
     
 	public Island(String name) {
 		this.name = name;
@@ -40,9 +40,9 @@ public class Island {
 		return name;
 	}
 	
-	public Set<Monster> getMonsters() {
-		return monsters;
-	}
+//	public Set<Monster> getMonsters() {
+//		return monsters;
+//	}
 
 	@Override
 	public String toString() {

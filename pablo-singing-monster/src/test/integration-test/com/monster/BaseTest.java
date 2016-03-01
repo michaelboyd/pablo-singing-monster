@@ -46,7 +46,7 @@ public class BaseTest {
 		monsterRepo.save(monster);
 		
 		//save the monster back on the island
-		island.getMonsters().add(monster);
+		//island.getMonsters().add(monster);
 		islandRepo.save(island);
 		
 		//save the picture
@@ -62,13 +62,13 @@ public class BaseTest {
 	@After
 	public void destroyRecords() {
 		Island island = islandRepo.findByName("IslandOne");
-		//Island island = islands.get(0);		
-		Set <Monster> monsters = island.getMonsters();
+		List <Monster> monsters = monsterRepo.findByIsland(island);
 		for(Monster monster : monsters) {
 			List <Picture> pictures = pictureRepo.findByMonster(monster);
 			for(Picture picture : pictures) {
 				pictureRepo.delete(picture);
 			}
+			monsterRepo.delete(monster);
  		}
 		islandRepo.delete(island);
 	}

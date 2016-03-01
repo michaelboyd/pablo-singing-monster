@@ -70,9 +70,6 @@ public class MonsterForm extends FormLayout {
 	@Autowired
 	public PictureService pictureService;
 	
-//	@Autowired
-//	public IslandRepository islandRepo;
-
     private BeanFieldGroup <Monster> formFieldBindings;
 
     @Autowired

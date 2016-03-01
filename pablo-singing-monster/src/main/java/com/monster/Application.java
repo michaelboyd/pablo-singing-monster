@@ -56,7 +56,7 @@ public class Application {
 				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {
 					m = new Monster(monsterNames[i], "", island1);
 					monsterRepo.save(m);
-					island1.getMonsters().add(m);
+					//island1.getMonsters().add(m);
 				}
 			}
 			
