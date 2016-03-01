@@ -48,6 +48,7 @@ public class MonsterForm extends FormLayout {
     private Button save = new Button("Save", this::save);
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);
+    private Button deletePicture = new Button("Delete Picture", this::deletePicture);
     private TextField name = new TextField("Name");
     private TextArea description = new TextArea("Description");
 	private final Embedded image = new Embedded("Uploaded Picture");
@@ -86,8 +87,10 @@ public class MonsterForm extends FormLayout {
         setSizeUndefined();
         setMargin(true);
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
+        HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
-		addComponents(actions, name, description, upload, image);
+        pictureAction.setSpacing(true);
+		addComponents(actions, name, description, upload, image, pictureAction);
     }
 
     public void save(Button.ClickEvent event) {
@@ -122,6 +125,14 @@ public class MonsterForm extends FormLayout {
         Notification.show("Deleted",Type.TRAY_NOTIFICATION);    	
         refreshMonsterList();  	
     }
+    
+    public void deletePicture(Button.ClickEvent event) {
+    	List <Picture> pictures = pictureRepo.findByMonster(monster);
+    	for(Picture picture : pictures) {
+    		pictureRepo.delete(picture);
+    	}
+    	showOrHidePicture(null);
+    }
 
     void edit(Monster monster) {
         this.monster = monster;
@@ -131,7 +142,7 @@ public class MonsterForm extends FormLayout {
         }
         delete.setVisible(true);
         setVisible(monster != null);
-        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
         if(monster != null) {
         	showOrHidePicture(picture);
         }
@@ -224,10 +235,12 @@ public class MonsterForm extends FormLayout {
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));
 			upload.setVisible(false);
+			deletePicture.setVisible(true);
 		} else {
 			image.setVisible(false);
 			image.setSource(null);
 			upload.setVisible(true);
+			deletePicture.setVisible(false);
 		}		
     }	
 }
