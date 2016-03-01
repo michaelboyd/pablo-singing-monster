@@ -9,11 +9,12 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.monster.domain.Island;
+import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
@@ -31,6 +32,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextArea;
@@ -53,7 +55,8 @@ public class MonsterForm extends FormLayout {
     private TextArea description = new TextArea("Description");
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
-	private Upload upload = new Upload("Upload Picture", receiver);    
+	private Upload upload = new Upload("Upload Picture", receiver);   
+	private ListSelect island = new ListSelect("Islands");
 
     private Monster monster;
     byte[] fileData;
@@ -66,12 +69,17 @@ public class MonsterForm extends FormLayout {
 	
 	@Autowired
 	public PictureService pictureService;
+	
+//	@Autowired
+//	public IslandRepository islandRepo;
 
     private BeanFieldGroup <Monster> formFieldBindings;
 
-    public MonsterForm() {
+    @Autowired
+    public MonsterForm(IslandRepository islandRepo) {
         configureComponents();
         buildLayout();
+        initIslandList(islandRepo);
     }
 
     private void configureComponents() {
@@ -83,7 +91,6 @@ public class MonsterForm extends FormLayout {
 		setVisible(false);
         name.setWidth("300px");
         description.setWidth("300px");
-        
     }
 
     private void buildLayout() {
@@ -93,15 +100,13 @@ public class MonsterForm extends FormLayout {
         HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-		addComponents(actions, name, description, upload, image, pictureAction);
+		addComponents(actions, name, description, island, upload, image, pictureAction);
     }
 
     public void save(Button.ClickEvent event) {
         try {
-
         	formFieldBindings.commit();
             monsterRepo.save(monster);
-
 			String msg = String.format("Saved '%s'.", monster.getName());
             Notification.show(msg,Type.TRAY_NOTIFICATION);
             refreshMonsterList();
@@ -149,7 +154,14 @@ public class MonsterForm extends FormLayout {
         if(monster != null) {
         	showOrHidePicture(picture);
         }
-        
+    }
+    
+    private void initIslandList(IslandRepository islandRepo) {
+        for(Island i : islandRepo.findAll()) {
+        	island.addItem(i);
+        }
+        island.setNullSelectionAllowed(false);
+        island.setRows(3);
     }
     
     void add(Monster monster) {
@@ -182,6 +194,7 @@ public class MonsterForm extends FormLayout {
 
 	class ImageUploader implements Receiver, SucceededListener {
 
+		private static final long serialVersionUID = 8684994998768778621L;
 		public File file;
 
 		public OutputStream receiveUpload(String filename, String mimeType) {

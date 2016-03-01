@@ -61,8 +61,8 @@ public class BaseTest {
 	
 	@After
 	public void destroyRecords() {
-		List <Island> islands = islandRepo.findByName("IslandOne");
-		Island island = islands.get(0);		
+		Island island = islandRepo.findByName("IslandOne");
+		//Island island = islands.get(0);		
 		Set <Monster> monsters = island.getMonsters();
 		for(Monster monster : monsters) {
 			List <Picture> pictures = pictureRepo.findByMonster(monster);

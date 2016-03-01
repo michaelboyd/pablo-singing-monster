@@ -33,20 +33,20 @@ public class Application {
 		SpringApplication.run(Application.class);
 	}
 
-	//@Bean
+	@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
 			
 			//islands
-			String islandNames[] = {"Monstro-city"};
+			String islandNames[] = {"Monstro-city", "IslandNumberTwo"};
 			
 			for(int i=0; i<islandNames.length; i++) {
-				if(islandRepo.findByName(islandNames[i]).isEmpty()) {
+				if(islandRepo.findByName(islandNames[i]) == null) {
 					islandRepo.save(new Island(islandNames[i]));
 				}
 			}
 			
-			Island island1 = (Island)((List)islandRepo.findByName("Monstro-city")).get(0);
+			Island island1 = islandRepo.findByName("Monstro-city");
 			
 			//monster names
 			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune", "Peacemaker"};

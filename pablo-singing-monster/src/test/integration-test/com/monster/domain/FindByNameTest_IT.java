@@ -25,8 +25,8 @@ public class FindByNameTest_IT extends BaseTest{
 	
 	@Test
 	public void findByName_IslandRecordContainsGivenName_ShouldReturnOneMonster() {
-        List <Island> searchResults = islandRepo.findByName("IslandOne");
-        assertThat(searchResults).hasSize(1);
+        Island searchResults = islandRepo.findByName("IslandOne");
+        assertThat(searchResults != null);
     }	
 	
 	@Test

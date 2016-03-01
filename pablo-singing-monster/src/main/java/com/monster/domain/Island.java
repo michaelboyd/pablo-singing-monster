@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Island {
@@ -18,7 +20,9 @@ public class Island {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long id;	
+    private long id;
+    
+    @NotNull    
     private String name;
     
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
@@ -42,11 +46,7 @@ public class Island {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Island [id=").append(id).append(", name=").append(name).append("]");
-		return builder.toString();
+		return name;
 	}
-
-	
 	
 }
