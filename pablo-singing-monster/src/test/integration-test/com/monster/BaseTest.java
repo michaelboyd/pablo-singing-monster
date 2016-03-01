@@ -18,8 +18,8 @@ import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
-import com.monster.image.utils.ImageSize;
 import com.monster.service.PictureService;
+import com.monster.utils.ImageSize;
 
 public class BaseTest {
 	

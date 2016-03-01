@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.monster.domain.Monster;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
-import com.monster.image.utils.ImageSize;
+import com.monster.utils.ImageSize;
 import com.sun.media.jai.codec.SeekableStream;
 import com.vaadin.spring.annotation.SpringComponent;
 

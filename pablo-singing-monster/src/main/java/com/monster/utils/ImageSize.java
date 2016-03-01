@@ -1,4 +1,4 @@
-package com.monster.image.utils;
+package com.monster.utils;
 
 
 public enum ImageSize {

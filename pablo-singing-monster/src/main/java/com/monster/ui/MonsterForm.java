@@ -18,8 +18,8 @@ import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
-import com.monster.image.utils.ImageSize;
 import com.monster.service.PictureService;
+import com.monster.utils.ImageSize;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.event.ShortcutAction;
@@ -80,7 +80,10 @@ public class MonsterForm extends FormLayout {
         image.setVisible(false);
 		upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);        
-        setVisible(false);
+		setVisible(false);
+        name.setWidth("300px");
+        description.setWidth("300px");
+        
     }
 
     private void buildLayout() {

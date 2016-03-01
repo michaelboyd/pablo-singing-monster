@@ -17,13 +17,11 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.monster.image.utils.ImageSize;
-import com.monster.image.utils.ImageType;
+import com.monster.utils.ImageSize;
 
 @Entity
 public class Picture { 

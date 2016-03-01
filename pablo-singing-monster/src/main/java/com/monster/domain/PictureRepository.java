@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.monster.image.utils.ImageSize;
+import com.monster.utils.ImageSize;
 
 public interface PictureRepository extends CrudRepository<Picture, Long> {
 	
