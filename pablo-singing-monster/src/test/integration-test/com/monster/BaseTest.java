@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,7 +17,6 @@ import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.service.PictureService;
-import com.monster.utils.ImageSize;
 
 public class BaseTest {
 	
