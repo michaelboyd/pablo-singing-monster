@@ -13,6 +13,7 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -24,8 +25,6 @@ public class MonsterUI extends UI {
 	private final Grid monsterList = new Grid();
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
-
-	//discoverable beans
 	private final MonsterRepository repo;
 	private final MonsterForm monsterForm;
 	
@@ -74,8 +73,16 @@ public class MonsterUI extends UI {
         HorizontalLayout mainLayout = new HorizontalLayout(left, monsterForm);
         mainLayout.setSizeFull();
         mainLayout.setExpandRatio(left, 1);
+        
+        //setContent(mainLayout);
 
-        setContent(mainLayout);	
+        TabSheet tabsheet = new TabSheet();
+        tabsheet.addTab(mainLayout).setCaption("Monsters");
+        
+        VerticalLayout islands = new VerticalLayout();
+        tabsheet.addTab(islands).setCaption("Islands");
+        
+        setContent(tabsheet);
 		
 	}
 	
