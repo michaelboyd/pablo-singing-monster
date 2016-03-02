@@ -3,6 +3,8 @@ package com.monster.ui;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.monster.domain.Island;
+import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.vaadin.annotations.Theme;
@@ -23,15 +25,21 @@ import com.vaadin.ui.VerticalLayout;
 public class MonsterUI extends UI {
 	
 	private final Grid monsterList = new Grid();
+	private final Grid islandList = new Grid();
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
 	private final MonsterRepository repo;
+	private final IslandRepository islandRepo;
 	private final MonsterForm monsterForm;
+	private final IslandForm islandForm;
 	
 	@Autowired
-	public MonsterUI(MonsterRepository repo, MonsterForm monsterForm) {
+	public MonsterUI(MonsterRepository repo, MonsterForm monsterForm,
+			IslandForm islandForm, IslandRepository islandRepo) {
 		this.repo = repo;
 		this.monsterForm = monsterForm;
+		this.islandForm = islandForm;
+		this.islandRepo = islandRepo;
 	}
 
 	@Override
@@ -55,6 +63,7 @@ public class MonsterUI extends UI {
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
         
 		listMonsters(null);
+		listIslands();
 		
 	}
 	
@@ -74,19 +83,26 @@ public class MonsterUI extends UI {
         mainLayout.setSizeFull();
         mainLayout.setExpandRatio(left, 1);
         
-        //setContent(mainLayout);
-
         TabSheet tabsheet = new TabSheet();
+        
         tabsheet.addTab(mainLayout).setCaption("Monsters");
         
         VerticalLayout islands = new VerticalLayout();
-        tabsheet.addTab(islands).setCaption("Islands");
+        islands.setSizeFull();
+        islandList.setSizeFull();
+        islands.setExpandRatio(islandList, 1);
+
+        HorizontalLayout islandLayout = new HorizontalLayout(islands, islandForm);
+        islandLayout.setSizeFull();
+        islandLayout.setExpandRatio(left, 1);
+        
+        tabsheet.addTab(islandLayout).setCaption("Islands");
         
         setContent(tabsheet);
 		
 	}
 	
-	void listMonsters(String text) {
+	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
 			monsterList.setContainerDataSource(
 					new BeanItemContainer<Monster>(Monster.class, repo.findAll()));
@@ -95,6 +111,11 @@ public class MonsterUI extends UI {
 			monsterList.setContainerDataSource(new BeanItemContainer<Monster>(Monster.class,
 					repo.findByNameStartsWithIgnoreCase(text)));
 		}
+	}
+	
+	protected void listIslands() {
+		islandList.setContainerDataSource(new BeanItemContainer<Island>(
+				Island.class, islandRepo.findAll()));
 	}
 
 	TextField getFilter() {
