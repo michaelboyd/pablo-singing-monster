@@ -87,14 +87,14 @@ public class MonsterUI extends UI {
         
         tabsheet.addTab(mainLayout).setCaption("Monsters");
         
-        VerticalLayout islands = new VerticalLayout();
+        VerticalLayout islands = new VerticalLayout(islandList);
         islands.setSizeFull();
         islandList.setSizeFull();
         islands.setExpandRatio(islandList, 1);
 
         HorizontalLayout islandLayout = new HorizontalLayout(islands, islandForm);
         islandLayout.setSizeFull();
-        islandLayout.setExpandRatio(left, 1);
+        islandLayout.setExpandRatio(islands, 1);
         
         tabsheet.addTab(islandLayout).setCaption("Islands");
         
