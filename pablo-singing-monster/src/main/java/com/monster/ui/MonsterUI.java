@@ -1,5 +1,7 @@
 package com.monster.ui;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -64,14 +66,18 @@ public class MonsterUI extends UI {
         monsterList.removeColumn("id");                
         monsterList.setSelectionMode(Grid.SelectionMode.SINGLE);
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
+        monsterList.sort("name");
         
         islandList.setContainerDataSource(new BeanItemContainer<>(Island.class));
         islandList.removeColumn("id");
         islandList.setSelectionMode(Grid.SelectionMode.SINGLE);
         islandList.addSelectionListener(e -> islandForm.edit((Island) islandList.getSelectedRow()));
+        monsterList.sort("name");
         
 		listMonsters(null);
 		listIslands();
+		
+		
 		
 	}
 	
@@ -91,7 +97,7 @@ public class MonsterUI extends UI {
         mainLayout.setSizeFull();
         mainLayout.setExpandRatio(left, 1);
         
-		HorizontalLayout islandActions = new HorizontalLayout();
+		HorizontalLayout islandActions = new HorizontalLayout(addIslandButton);
 		islandActions.setWidth("100%");
 		islandActions.setComponentAlignment(addIslandButton, Alignment.MIDDLE_RIGHT);
 		
@@ -113,6 +119,9 @@ public class MonsterUI extends UI {
 	
 	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
+			
+			List <Monster> monsters = repo.findAll();
+			
 			monsterList.setContainerDataSource(
 					new BeanItemContainer<Monster>(Monster.class, repo.findAll()));
 		}
