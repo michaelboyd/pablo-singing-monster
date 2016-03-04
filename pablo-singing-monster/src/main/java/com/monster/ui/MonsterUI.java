@@ -8,6 +8,7 @@ import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
@@ -56,11 +57,16 @@ public class MonsterUI extends UI {
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));
 
         monsterList.setContainerDataSource(new BeanItemContainer<>(Monster.class));
-        monsterList.setColumnOrder("id", "name", "description");
+        monsterList.setColumnOrder("name", "description");
+        monsterList.removeColumn("id");
         monsterList.removeColumn("island");        
         monsterList.setSelectionMode(Grid.SelectionMode.SINGLE);
-        
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
+        
+        islandList.setContainerDataSource(new BeanItemContainer<>(Island.class));
+        islandList.removeColumn("id");
+        islandList.setSelectionMode(Grid.SelectionMode.SINGLE);
+        islandList.addSelectionListener(e -> islandForm.edit((Island) islandList.getSelectedRow()));
         
 		listMonsters(null);
 		listIslands();

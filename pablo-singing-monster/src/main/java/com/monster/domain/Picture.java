@@ -32,7 +32,11 @@ public class Picture {
     
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name="monster_id", nullable=true)
-    private Monster monster;    
+    private Monster monster;  
+    
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name="island_id", nullable=true)
+    private Island island;    
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
@@ -69,6 +73,14 @@ public class Picture {
 
 	public Monster getMonster() {
 		return monster;
+	}
+	
+	public Island getIsland() {
+		return island;
+	}
+
+	public void setIsland(Island island) {
+		this.island = island;
 	}
 
 	public void setMonster(Monster monster) {

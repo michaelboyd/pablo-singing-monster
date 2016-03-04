@@ -1,5 +1,10 @@
 package com.monster;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
+import com.monster.service.PictureService;
 
 @SpringBootApplication
 public class Application {
@@ -22,6 +28,9 @@ public class Application {
 	@Autowired
 	private IslandRepository islandRepo;
 	
+	@Autowired
+	public PictureService pictureService;	
+	
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String[] args) {
@@ -31,6 +40,8 @@ public class Application {
 	@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
+			
+			log.info("loading sample data");
 			
 			//islands
 			String islandNames[] = {"Monstro-city", "IslandNumberTwo"};
@@ -51,12 +62,23 @@ public class Application {
 				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {
 					m = new Monster(monsterNames[i], "", island1);
 					monsterRepo.save(m);
-					//island1.getMonsters().add(m);
 				}
+				
+				//save the picture
+				try {
+					Path path = Paths.get("test-image/test.jpg");
+					byte[] file = Files.readAllBytes(path);
+					pictureService.savePicture(m, file, "test.jpg");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+				
 			}
 			
 			//persist the island to update monsters
 			islandRepo.save(island1);
+			
+			log.info("finished loading sample data");
 			
 			log.info("Monsters found with findAll():");
 			log.info("-------------------------------");
