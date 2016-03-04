@@ -15,7 +15,6 @@ public class Island {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
     
-    @NotNull    
     private String name;
     
 	public Island(String name) {

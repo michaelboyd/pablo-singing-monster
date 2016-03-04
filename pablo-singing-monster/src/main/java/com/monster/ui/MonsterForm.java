@@ -75,8 +75,8 @@ public class MonsterForm extends FormLayout {
     @Autowired
     public MonsterForm(IslandRepository islandRepo) {
         configureComponents();
-        buildLayout();
         initIslandList(islandRepo);
+        buildLayout();        
     }
 
     private void configureComponents() {
@@ -99,6 +99,11 @@ public class MonsterForm extends FormLayout {
         pictureAction.setSpacing(true);
 		addComponents(name, description, island, upload, image, pictureAction, actions);
     }
+    
+    private void initIslandList(IslandRepository islandRepo) {
+       	island.addItem(islandRepo.findAll());
+        island.setNullSelectionAllowed(false);
+    }    
 
     public void save(Button.ClickEvent event) {
         try {
@@ -152,14 +157,6 @@ public class MonsterForm extends FormLayout {
         	showOrHidePicture(picture);
         	island.setValue(monster.getIsland());
         }
-    }
-    
-    private void initIslandList(IslandRepository islandRepo) {
-        for(Island i : islandRepo.findAll()) {
-        	island.addItem(i);
-        }
-        island.setNullSelectionAllowed(false);
-        //island.setRows(3);
     }
     
     void add(Monster monster) {

@@ -12,13 +12,14 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Monster {
 	
-	protected Monster() {
-	}
+	protected Monster() {}
 	
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long id;	
+    private long id;
+    
     private String name;
+    
     @Lob 
     private String description;
 
