@@ -19,7 +19,7 @@ import com.vaadin.ui.TextField;
 
 @SpringComponent
 @UIScope
-public class IslandForm extends FormLayout {
+public class IslandForm extends FormLayout implements FormConstants {
 	
     private Button save = new Button("Save", this::save);
     private Button cancel = new Button("Cancel", this::cancel);
@@ -67,7 +67,7 @@ public class IslandForm extends FormLayout {
         try {
         	formFieldBindings.commit();
             islandRepo.save(island);
-			String msg = String.format("Saved '%s'.", island.getName());
+			String msg = String.format(SAVED_NOTIFICATION_LABEL + " '%s'.", island.getName());
             Notification.show(msg,Type.TRAY_NOTIFICATION);
             refreshIslandList();
             name.setValue("");
@@ -79,13 +79,13 @@ public class IslandForm extends FormLayout {
 
     public void cancel(Button.ClickEvent event) {
     	setVisible(false);
-        Notification.show("Cancelled", Type.TRAY_NOTIFICATION);
+        Notification.show(CANCELED_NOTIFICATION_LABEL, Type.TRAY_NOTIFICATION);
         refreshIslandList();
     }
     
     public void delete(Button.ClickEvent event) {
     	islandRepo.delete(island);
-        Notification.show("Deleted",Type.TRAY_NOTIFICATION);    	
+        Notification.show(DELETED_NOTIFICATION_LABEL,Type.TRAY_NOTIFICATION);    	
         refreshIslandList();  	
     } 
     

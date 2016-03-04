@@ -57,6 +57,7 @@ public class MonsterUI extends UI {
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));
 
         monsterList.setContainerDataSource(new BeanItemContainer<>(Monster.class));
+        
         monsterList.setColumnOrder("name", "description");
         monsterList.removeColumn("id");
         monsterList.removeColumn("island");        
