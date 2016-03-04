@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
@@ -23,6 +22,7 @@ import com.monster.service.PictureService;
 import com.monster.utils.ImageSize;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
@@ -86,10 +86,15 @@ public class MonsterForm extends FormLayout {
 		upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);        
 		setVisible(false);
-        name.setWidth("300px");
+    	name.setWidth("300px");
+        name.setRequired(true);
+        name.setRequiredError("Name must not be empty");
+        name.setImmediate(true);
+        name.setValidationVisible(true);
+        name.addValidator(new StringLengthValidator("Must not be empty", 1, 100, false));
         description.setWidth("300px");
     }
-
+    
     private void buildLayout() {
         setSizeUndefined();
         setMargin(true);

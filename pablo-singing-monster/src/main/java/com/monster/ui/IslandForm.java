@@ -6,6 +6,7 @@ import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
@@ -14,8 +15,8 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
 @UIScope
@@ -42,7 +43,13 @@ public class IslandForm extends FormLayout implements FormConstants {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);    	
     	setVisible(false);
+
     	name.setWidth("300px");
+        name.setRequired(true);
+        name.setRequiredError("Name must not be empty");
+        name.setImmediate(true);
+        name.setValidationVisible(true);
+        name.addValidator(new StringLengthValidator("Must not be empty", 1, 100, false));
     } 
     
     private void buildLayout() {
@@ -88,6 +95,19 @@ public class IslandForm extends FormLayout implements FormConstants {
         Notification.show(DELETED_NOTIFICATION_LABEL,Type.TRAY_NOTIFICATION);    	
         refreshIslandList();  	
     } 
+    
+    void add(Island island) {
+        this.island = island;
+        if(island != null) {
+            // Bind the properties of the monster POJO to fields in this form
+            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(island, this);
+            name.focus();
+        }
+        delete.setVisible(false);
+        setVisible(island != null);
+        //showOrHidePicture(null);
+        //upload.setVisible(false);
+    }    
     
     private void refreshIslandList() {
 		getUI().listIslands();  

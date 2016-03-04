@@ -8,11 +8,11 @@ import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.vaadin.annotations.Theme;
-import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -29,6 +29,7 @@ public class MonsterUI extends UI {
 	private final Grid islandList = new Grid();
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
+	private final Button addIslandButton = new Button("New Island", FontAwesome.PLUS);
 	private final MonsterRepository repo;
 	private final IslandRepository islandRepo;
 	private final MonsterForm monsterForm;
@@ -52,15 +53,15 @@ public class MonsterUI extends UI {
 	private void configureComponents() {
 		
 		addNewBtn.addClickListener(e -> monsterForm.add(new Monster("","", null)));
-
+		addIslandButton.addClickListener(e -> islandForm.add(new Island("")));
+		
 		filter.setInputPrompt("Filter by Name");
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));
 
         monsterList.setContainerDataSource(new BeanItemContainer<>(Monster.class));
         
         monsterList.setColumnOrder("name", "description");
-        monsterList.removeColumn("id");
-        monsterList.removeColumn("island");        
+        monsterList.removeColumn("id");                
         monsterList.setSelectionMode(Grid.SelectionMode.SINGLE);
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
         
@@ -90,11 +91,11 @@ public class MonsterUI extends UI {
         mainLayout.setSizeFull();
         mainLayout.setExpandRatio(left, 1);
         
-        TabSheet tabsheet = new TabSheet();
-        
-        tabsheet.addTab(mainLayout).setCaption("Monsters");
-        
-        VerticalLayout islands = new VerticalLayout(islandList);
+		HorizontalLayout islandActions = new HorizontalLayout();
+		islandActions.setWidth("100%");
+		islandActions.setComponentAlignment(addIslandButton, Alignment.MIDDLE_RIGHT);
+		
+        VerticalLayout islands = new VerticalLayout(islandActions, islandList);
         islands.setSizeFull();
         islandList.setSizeFull();
         islands.setExpandRatio(islandList, 1);
@@ -103,8 +104,9 @@ public class MonsterUI extends UI {
         islandLayout.setSizeFull();
         islandLayout.setExpandRatio(islands, 1);
         
+        TabSheet tabsheet = new TabSheet();        
         tabsheet.addTab(islandLayout).setCaption("Islands");
-        
+        tabsheet.addTab(mainLayout).setCaption("Monsters");
         setContent(tabsheet);
 		
 	}
