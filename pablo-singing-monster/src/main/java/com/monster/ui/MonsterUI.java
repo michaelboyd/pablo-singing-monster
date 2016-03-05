@@ -119,9 +119,6 @@ public class MonsterUI extends UI {
 	
 	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
-			
-			List <Monster> monsters = repo.findAll();
-			
 			monsterList.setContainerDataSource(
 					new BeanItemContainer<Monster>(Monster.class, repo.findAll()));
 		}

@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
+import com.monster.domain.Monster;
+import com.monster.domain.MonsterRepository;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -15,6 +18,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -26,6 +30,7 @@ public class IslandForm extends FormLayout implements FormConstants {
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);	
 	private TextField name = new TextField("Name");
+	Table monsterList = new Table("Monsters");
 	
 	 private Island island;
 	
@@ -34,9 +39,14 @@ public class IslandForm extends FormLayout implements FormConstants {
     @Autowired
     private IslandRepository islandRepo;
     
-    public IslandForm() {
+    private MonsterRepository monsterRepo;
+    
+    @Autowired
+    public IslandForm(MonsterRepository monsterRepo) {
+    	this.monsterRepo = monsterRepo;
     	configureComponents();
     	buildLayout();
+    	
     }
     
     private void configureComponents() {
@@ -50,6 +60,11 @@ public class IslandForm extends FormLayout implements FormConstants {
         name.setImmediate(true);
         name.setValidationVisible(true);
         name.addValidator(new StringLengthValidator("Must not be empty", 1, 100, false));
+        
+        monsterList.setHeight("400px");
+        monsterList.setWidth("300px");        
+        
+        loadMonsterList();
     } 
     
     private void buildLayout() {
@@ -57,7 +72,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         setMargin(true);
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
         actions.setSpacing(true);
-    	addComponents(name, actions);
+    	addComponents(name, monsterList, actions);
     }    
 	
     void edit(Island island) {
@@ -67,6 +82,7 @@ public class IslandForm extends FormLayout implements FormConstants {
             name.focus();
         }
         delete.setVisible(true);
+        loadMonsterList();
         setVisible(island != null);
     }
     
@@ -107,11 +123,27 @@ public class IslandForm extends FormLayout implements FormConstants {
         setVisible(island != null);
         //showOrHidePicture(null);
         //upload.setVisible(false);
+        clearMonsterList();
     }    
     
     private void refreshIslandList() {
 		getUI().listIslands();  
-    }  
+    }
+    
+	private void loadMonsterList() {
+        Object fields[] = {"name"};
+        boolean order[] = {true};
+		if(island != null) {
+			monsterList.setContainerDataSource(new BeanItemContainer<Monster>(
+					Monster.class, monsterRepo.findByIsland(island)));
+	        monsterList.sort(fields, order);
+	        monsterList.setVisibleColumns("name", "description");
+		}
+	} 
+	
+	private void clearMonsterList() {
+		monsterList.clear();
+	}
     
     @Override
     public MonsterUI getUI() {
