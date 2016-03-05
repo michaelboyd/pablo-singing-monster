@@ -106,7 +106,7 @@ public class MonsterForm extends FormLayout {
     }
     
     private void initIslandList(IslandRepository islandRepo) {
-       	island.addItem(islandRepo.findAll());
+       	island.addItems(islandRepo.findAll());
         island.setNullSelectionAllowed(false);
     }    
 

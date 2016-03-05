@@ -28,9 +28,17 @@ public class Island {
 		return name;
 	}
 	
+
+
 	@Override
 	public String toString() {
-		return name;
+		StringBuilder builder = new StringBuilder();
+		builder.append("Island [id=");
+		builder.append(id);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	public void setName(String name) {
