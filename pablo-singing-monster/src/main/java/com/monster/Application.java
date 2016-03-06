@@ -53,12 +53,12 @@ public class Application extends SpringBootServletInitializer{
 			String islandNames[] = {"Monstro-city", "IslandNumberTwo"};
 			
 			for(int i=0; i<islandNames.length; i++) {
-				if(islandRepo.findByName(islandNames[i]) == null) {
+				if(islandRepo.findByNameOrderByNameAsc(islandNames[i]) == null) {
 					islandRepo.save(new Island(islandNames[i]));
 				}
 			}
 			
-			Island island1 = islandRepo.findByName("Monstro-city");
+			Island island1 = islandRepo.findByNameOrderByNameAsc("Monstro-city");
 			
 			//monster names
 			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune", "Peacemaker"};

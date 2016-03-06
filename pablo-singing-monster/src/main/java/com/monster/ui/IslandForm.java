@@ -121,9 +121,8 @@ public class IslandForm extends FormLayout implements FormConstants {
         }
         delete.setVisible(false);
         setVisible(island != null);
-        //showOrHidePicture(null);
-        //upload.setVisible(false);
-        clearMonsterList();
+        monsterList.setContainerDataSource(null);
+        monsterList.setVisible(false);
     }    
     
     private void refreshIslandList() {
@@ -131,20 +130,13 @@ public class IslandForm extends FormLayout implements FormConstants {
     }
     
 	private void loadMonsterList() {
-        Object fields[] = {"name"};
-        boolean order[] = {true};
 		if(island != null) {
 			monsterList.setContainerDataSource(new BeanItemContainer<Monster>(
-					Monster.class, monsterRepo.findByIsland(island)));
-	        monsterList.sort(fields, order);
+					Monster.class, monsterRepo.findByIslandOrderByNameAsc(island)));
 	        monsterList.setVisibleColumns("name", "description");
 		}
 	} 
 	
-	private void clearMonsterList() {
-		monsterList.clear();
-	}
-    
     @Override
     public MonsterUI getUI() {
         return (MonsterUI) super.getUI();

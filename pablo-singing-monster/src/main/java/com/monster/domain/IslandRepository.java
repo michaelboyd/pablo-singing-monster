@@ -5,6 +5,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface IslandRepository extends JpaRepository <Island, Long> {
 
-	Island findByName(@Param("name") String name);
+	Island findByNameOrderByNameAsc(@Param("name") String name);
 	
 }

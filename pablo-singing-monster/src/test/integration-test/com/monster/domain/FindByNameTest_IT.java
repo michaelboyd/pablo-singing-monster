@@ -25,7 +25,7 @@ public class FindByNameTest_IT extends BaseTest{
 	
 	@Test
 	public void findByName_IslandRecordContainsGivenName_ShouldReturnOneMonster() {
-        Island searchResults = islandRepo.findByName("IslandOne");
+        Island searchResults = islandRepo.findByNameOrderByNameAsc("IslandOne");
         assertThat(searchResults != null);
     }	
 	

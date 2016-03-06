@@ -1,6 +1,7 @@
 package com.monster.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
 import com.monster.domain.Island;
@@ -64,13 +65,13 @@ public class MonsterUI extends UI {
         monsterList.removeColumn("id");                
         monsterList.setSelectionMode(Grid.SelectionMode.SINGLE);
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
-        monsterList.sort("name");
+        //monsterList.sort("name");
         
         islandList.setContainerDataSource(new BeanItemContainer<>(Island.class));
         islandList.removeColumn("id");
         islandList.setSelectionMode(Grid.SelectionMode.SINGLE);
         islandList.addSelectionListener(e -> islandForm.edit((Island) islandList.getSelectedRow()));
-        monsterList.sort("name");
+        //monsterList.sort("name");
         
 		listMonsters(null);
 		listIslands();
@@ -109,8 +110,8 @@ public class MonsterUI extends UI {
         islandLayout.setExpandRatio(islands, 1);
         
         TabSheet tabsheet = new TabSheet();        
-        tabsheet.addTab(islandLayout).setCaption("Islands");
-        tabsheet.addTab(mainLayout).setCaption("Monsters");
+        tabsheet.addTab(islandLayout).setCaption("Edit Islands");
+        tabsheet.addTab(mainLayout).setCaption("Edit Monsters");
         setContent(tabsheet);
 		
 	}
@@ -118,7 +119,7 @@ public class MonsterUI extends UI {
 	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
 			monsterList.setContainerDataSource(
-					new BeanItemContainer<Monster>(Monster.class, repo.findAll()));
+					new BeanItemContainer<Monster>(Monster.class, repo.findAll(new Sort(Sort.Direction.ASC, "name"))));
 		}
 		else {
 			monsterList.setContainerDataSource(new BeanItemContainer<Monster>(Monster.class,
@@ -128,7 +129,7 @@ public class MonsterUI extends UI {
 	
 	protected void listIslands() {
 		islandList.setContainerDataSource(new BeanItemContainer<Island>(
-				Island.class, islandRepo.findAll()));
+				Island.class, islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))));
 	}
 
 	TextField getFilter() {
