@@ -83,6 +83,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         }
         delete.setVisible(true);
         loadMonsterList();
+        monsterList.setVisible(true);
         setVisible(island != null);
     }
     
