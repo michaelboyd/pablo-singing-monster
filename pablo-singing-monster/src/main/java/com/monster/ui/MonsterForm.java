@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
@@ -35,7 +36,6 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Select;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
@@ -107,9 +107,10 @@ public class MonsterForm extends FormLayout {
     }
     
     private void initIslandList(IslandRepository islandRepo) {
-       	island.addItems(islandRepo.findAll());
+		island.addItems(islandRepo
+				.findAll(new Sort(Sort.Direction.ASC, "name")));
         island.setNullSelectionAllowed(false);
-    }    
+    }   
 
     public void save(Button.ClickEvent event) {
         try {
