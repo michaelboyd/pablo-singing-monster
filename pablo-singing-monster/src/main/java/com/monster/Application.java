@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
@@ -20,7 +21,7 @@ import com.monster.domain.MonsterRepository;
 import com.monster.service.PictureService;
 
 @SpringBootApplication
-public class Application {
+public class Application extends SpringBootServletInitializer{
 	
 	@Autowired
 	private MonsterRepository monsterRepo;
@@ -32,12 +33,17 @@ public class Application {
 	public PictureService pictureService;	
 	
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
+	
+	@Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }	
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class);
 	}
 
-	@Bean
+	//@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
 			
