@@ -29,6 +29,7 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -55,8 +56,8 @@ public class MonsterForm extends FormLayout {
     private TextArea description = new TextArea("Description");
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
-	private Upload upload = new Upload("Upload Picture", receiver);   
-	private Select island = new Select("Islands");
+	private Upload upload = new Upload("Upload Picture", receiver);  
+	private ComboBox island = new ComboBox("Islands");
 
     private Monster monster;
     byte[] fileData;

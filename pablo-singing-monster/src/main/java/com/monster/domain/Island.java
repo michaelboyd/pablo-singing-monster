@@ -28,16 +28,13 @@ public class Island {
 		return name;
 	}
 	
-
-
-	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Island [id=");
-		builder.append(id);
-		builder.append(", name=");
+//		builder.append("Island [id=");
+//		builder.append(id);
+//		builder.append(", name=");
 		builder.append(name);
-		builder.append("]");
+//		builder.append("]");
 		return builder.toString();
 	}
 
