@@ -1,25 +1,46 @@
 package com.monster.ui;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
+import com.monster.domain.Picture;
+import com.monster.domain.PictureRepository;
+import com.monster.service.PictureService;
+import com.monster.utils.ImageSize;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.Upload;
+import com.vaadin.ui.Upload.Receiver;
+import com.vaadin.ui.Upload.SucceededEvent;
+import com.vaadin.ui.Upload.SucceededListener;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
@@ -30,9 +51,12 @@ public class IslandForm extends FormLayout implements FormConstants {
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);	
 	private TextField name = new TextField("Name");
-	Table monsterList = new Table("Monsters");
+	private Table monsterList = new Table("Monsters");
+	private final Embedded image = new Embedded("Uploaded Picture");
+	private ImageUploader receiver = new ImageUploader();	
+	private Upload upload = new Upload("Upload Picture", receiver);  
 	
-	 private Island island;
+	private Island island;
 	
     private BeanFieldGroup <Island> formFieldBindings;	
     
@@ -40,6 +64,12 @@ public class IslandForm extends FormLayout implements FormConstants {
     private IslandRepository islandRepo;
     
     private MonsterRepository monsterRepo;
+    
+	@Autowired
+	public PictureRepository pictureRepo;    
+    
+	@Autowired
+	public PictureService pictureService;    
     
     @Autowired
     public IslandForm(MonsterRepository monsterRepo) {
@@ -83,7 +113,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         }
         delete.setVisible(true);
         loadMonsterList();
-        monsterList.setVisible(true);
+        monsterList.setVisible(monsterList.size() > 0);
         setVisible(island != null);
     }
     
@@ -141,6 +171,74 @@ public class IslandForm extends FormLayout implements FormConstants {
     @Override
     public MonsterUI getUI() {
         return (MonsterUI) super.getUI();
-    }    
+    } 
+    
+	class ImageUploader implements Receiver, SucceededListener {
+
+		private static final long serialVersionUID = 8684994998768778621L;
+		public File file;
+
+		public OutputStream receiveUpload(String filename, String mimeType) {
+			FileOutputStream fos = null;
+			try {
+				file = new File("tmp/uploads/" + filename);
+				fos = new FileOutputStream(file);
+			} catch (final java.io.FileNotFoundException e) {
+				new Notification("Could not open file", e.getMessage(),
+						Notification.Type.ERROR_MESSAGE)
+						.show(Page.getCurrent());
+				return null;
+			}
+			return fos;
+		}
+
+		public void uploadSucceeded(SucceededEvent event) {
+			Path path = Paths.get(file.getPath());
+			Picture picture = null;
+			try {
+				byte[] fileData = Files.readAllBytes(path);
+	            if(fileData != null && fileData.length > 0) {
+	            	pictureService.savePicture(island, fileData, event.getFilename());
+	            }				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.thumb);
+			showOrHidePicture(picture);
+		}
+	} 
+	
+    private void showOrHidePicture(Picture picture) {
+		if (picture != null) {
+			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			image.setVisible(true);
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));
+			upload.setVisible(false);
+			//deletePicture.setVisible(true);
+		} else {
+			image.setVisible(false);
+			image.setSource(null);
+			upload.setVisible(true);
+			//deletePicture.setVisible(false);
+		}		
+    }
+    
+	public class MyImageSource implements StreamResource.StreamSource {
+
+		private byte file[] = null;
+
+		public MyImageSource(byte file[]) {
+			this.file = file;
+		}
+
+		public InputStream getStream() {
+			try {
+				return new ByteArrayInputStream(file);
+			} catch (Exception e) {
+				return null;
+			}
+		}
+	}    
 
 }
