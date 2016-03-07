@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Sort;
 
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
@@ -53,20 +52,10 @@ public class Application extends SpringBootServletInitializer{
 			
 			//islands
 			String islandNames[] = {"Monstro-city", "IslandNumberTwo"};
-			Island island = null;
+			
 			for(int i=0; i<islandNames.length; i++) {
 				if(islandRepo.findByNameOrderByNameAsc(islandNames[i]) == null) {
-					island = new Island(islandNames[i]);
-					islandRepo.save(island);
-					//save a picture
-					try {
-						Path path = Paths.get("test-image/test.jpg");
-						byte[] file = Files.readAllBytes(path);
-						pictureService.savePicture(island, file, "test.jpg");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}					
-					
+					islandRepo.save(new Island(islandNames[i]));
 				}
 			}
 			
@@ -80,15 +69,17 @@ public class Application extends SpringBootServletInitializer{
 				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {
 					m = new Monster(monsterNames[i], "", island1);
 					monsterRepo.save(m);
-					//save a picture
-					try {
-						Path path = Paths.get("test-image/test.jpg");
-						byte[] file = Files.readAllBytes(path);
-						pictureService.savePicture(m, file, "test.jpg");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}					
 				}
+				
+				//save the picture
+				try {
+					Path path = Paths.get("test-image/test.jpg");
+					byte[] file = Files.readAllBytes(path);
+					pictureService.savePicture(m, file, "test.jpg");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+				
 			}
 			
 			//persist the island to update monsters
@@ -98,15 +89,15 @@ public class Application extends SpringBootServletInitializer{
 			
 			log.info("Monsters found with findAll():");
 			log.info("-------------------------------");
-			for (Monster monster : monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"))) {
+			for (Monster monster : monsterRepo.findAll()) {
 				log.info(monster.toString());
 			}
 			log.info("-------------------------------");
 
 			log.info("Islands found with findAll():");
 			log.info("-------------------------------");
-			for (Island persistedIsland : islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))) {
-				log.info(persistedIsland.toString());
+			for (Island island : islandRepo.findAll()) {
+				log.info(island.toString());
 			}
 			log.info("-------------------------------");
 			

@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Hashtable;
 
 import javax.media.jai.JAI;
 import javax.media.jai.OpImage;
@@ -16,7 +15,6 @@ import javax.media.jai.RenderedOp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.monster.domain.Island;
 import com.monster.domain.Monster;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
@@ -51,7 +49,6 @@ public class PictureService {
 	private int maxWidthFull;
     private int maxWidthBig;
 	private int maxWidthThumb;	
-	Hashtable sizeEnumToWidthMapping = new Hashtable<Integer, ImageSize>();
 	
 	@Autowired
 	public PictureService(@Value("${image_full_max_width}") int maxWidthFull,
@@ -60,32 +57,38 @@ public class PictureService {
 		this.maxWidthFull = maxWidthFull;
 		this.maxWidthBig = maxWidthBig;
 		this.maxWidthThumb = maxWidthThumb;
-		sizeEnumToWidthMapping.put(ImageSize.big, maxWidthBig);
-		sizeEnumToWidthMapping.put(ImageSize.fullSize, maxWidthFull);
-		sizeEnumToWidthMapping.put(ImageSize.thumb, maxWidthThumb);
 	}
 	
-	public void savePicture(Object entity, byte[] fileData, String fileName) {	
+	public void savePicture(Monster monster, byte[] fileData, String fileName) {	
 		
 		Picture picture = null;
-		ImageSize[] sizes = ImageSize.values();
-		for(int i = 0; i<sizes.length; i++) {
-
-			picture = new Picture();
-			//dynamically associate entity
-			if(entity instanceof Monster) {
-				picture.setMonster((Monster) entity);
-			}
-			else if(entity instanceof Island) {
-				picture.setIsland((Island) entity);
-			}
-			picture.setImageSize(sizes[i]);
-			picture.setCreateDate(new Date());
-			picture.setFile(resizeImageAsJPG(fileData, (int)sizeEnumToWidthMapping.get(sizes[i])));
-			picture.setFileName(fileName);
-			pictureRepo.save(picture); 	
-			
-		}
+		
+		//thumb file
+		picture = new Picture();
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.thumb);
+		picture.setCreateDate(new Date());
+		picture.setFile(resizeImageAsJPG(fileData, maxWidthThumb));
+		picture.setFileName(fileName);
+		pictureRepo.save(picture); 	
+		
+		//big file
+		picture = new Picture();
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.big);
+		picture.setCreateDate(new Date());
+		picture.setFile(resizeImageAsJPG(fileData, maxWidthBig));
+		picture.setFileName(fileName);
+		pictureRepo.save(picture);		
+		
+		//full size file
+		picture = new Picture();
+		picture.setMonster(monster);
+		picture.setImageSize(ImageSize.fullSize);
+		picture.setCreateDate(new Date());
+		picture.setFile(resizeImageAsJPG(fileData, maxWidthFull));
+		picture.setFileName(fileName);
+		pictureRepo.save(picture);		
 		
 	}
 	

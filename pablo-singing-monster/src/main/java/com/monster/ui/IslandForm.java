@@ -17,8 +17,8 @@ import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
-import com.monster.domain.PictureRepository;
-import com.monster.service.PictureService;
+import com.monster.ui.MonsterForm.ImageUploader;
+import com.monster.ui.MonsterForm.MyImageSource;
 import com.monster.utils.ImageSize;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -34,13 +34,13 @@ import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
@@ -51,12 +51,13 @@ public class IslandForm extends FormLayout implements FormConstants {
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);	
 	private TextField name = new TextField("Name");
-	private Table monsterList = new Table("Monsters");
+	Table monsterList = new Table("Monsters");
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);  
 	
-	private Island island;
+	
+	 private Island island;
 	
     private BeanFieldGroup <Island> formFieldBindings;	
     
@@ -64,12 +65,6 @@ public class IslandForm extends FormLayout implements FormConstants {
     private IslandRepository islandRepo;
     
     private MonsterRepository monsterRepo;
-    
-	@Autowired
-	public PictureRepository pictureRepo;    
-    
-	@Autowired
-	public PictureService pictureService;    
     
     @Autowired
     public IslandForm(MonsterRepository monsterRepo) {
@@ -113,7 +108,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         }
         delete.setVisible(true);
         loadMonsterList();
-        monsterList.setVisible(monsterList.size() > 0);
+        monsterList.setVisible(true);
         setVisible(island != null);
     }
     
@@ -198,32 +193,17 @@ public class IslandForm extends FormLayout implements FormConstants {
 			try {
 				byte[] fileData = Files.readAllBytes(path);
 	            if(fileData != null && fileData.length > 0) {
-	            	pictureService.savePicture(island, fileData, event.getFilename());
+	            	//pictureService.savePicture(monster, fileData, event.getFilename());
 	            }				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
-			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.thumb);
-			showOrHidePicture(picture);
+			//picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+			//showOrHidePicture(picture);
 		}
-	} 
+	}  
 	
-    private void showOrHidePicture(Picture picture) {
-		if (picture != null) {
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
-			image.setVisible(true);
-			image.setSource(new StreamResource(imagesource, picture.getFileName()));
-			upload.setVisible(false);
-			//deletePicture.setVisible(true);
-		} else {
-			image.setVisible(false);
-			image.setSource(null);
-			upload.setVisible(true);
-			//deletePicture.setVisible(false);
-		}		
-    }
-    
 	public class MyImageSource implements StreamResource.StreamSource {
 
 		private byte file[] = null;
@@ -239,6 +219,21 @@ public class IslandForm extends FormLayout implements FormConstants {
 				return null;
 			}
 		}
-	}    
+	}
+	
+    private void showOrHidePicture(Picture picture) {
+		if (picture != null) {
+			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			image.setVisible(true);
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));
+			upload.setVisible(false);
+			//deletePicture.setVisible(true);
+		} else {
+			image.setVisible(false);
+			image.setSource(null);
+			upload.setVisible(true);
+			//deletePicture.setVisible(false);
+		}		
+    }	
 
 }
