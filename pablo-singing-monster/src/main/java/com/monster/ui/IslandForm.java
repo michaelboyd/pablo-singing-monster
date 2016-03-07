@@ -51,6 +51,7 @@ public class IslandForm extends FormLayout implements FormConstants {
     private Button save = new Button("Save", this::save);
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);	
+    private Button deletePicture = new Button("Delete Picture", this::deletePicture);
 	private TextField name = new TextField("Name");
 	Table monsterList = new Table("Monsters");
 	private final Embedded image = new Embedded("Uploaded Picture");
@@ -108,8 +109,10 @@ public class IslandForm extends FormLayout implements FormConstants {
         setSizeUndefined();
         setMargin(true);
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
+        HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
-    	addComponents(name, monsterList, upload, image, actions);
+        pictureAction.setSpacing(true);
+    	addComponents(actions, name, monsterList, upload, image, pictureAction);
     }    
 	
     void edit(Island island) {
@@ -123,7 +126,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         monsterList.setVisible(monsterList.size() > 0);
         setVisible(island != null);
         if(island != null) {
-        	Picture picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.big);
+        	Picture picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.big);
         	showOrHidePicture(picture);        	
         }        
     }
@@ -153,6 +156,14 @@ public class IslandForm extends FormLayout implements FormConstants {
         Notification.show(DELETED_NOTIFICATION_LABEL,Type.TRAY_NOTIFICATION);    	
         refreshIslandList();  	
     } 
+    
+    public void deletePicture(Button.ClickEvent event) {
+    	List <Picture> pictures = pictureRepo.findByIsland(island);
+    	for(Picture picture : pictures) {
+    		pictureRepo.delete(picture);
+    	}
+    	showOrHidePicture(null);
+    }    
     
     void add(Island island) {
         this.island = island;
@@ -216,7 +227,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.big);
+			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.big);
 			showOrHidePicture(picture);
 		}
 	}  
@@ -244,12 +255,12 @@ public class IslandForm extends FormLayout implements FormConstants {
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));
 			upload.setVisible(false);
-			//deletePicture.setVisible(true);
+			deletePicture.setVisible(true);
 		} else {
 			image.setVisible(false);
 			image.setSource(null);
 			upload.setVisible(true);
-			//deletePicture.setVisible(false);
+			deletePicture.setVisible(false);
 		}		
     }	
 

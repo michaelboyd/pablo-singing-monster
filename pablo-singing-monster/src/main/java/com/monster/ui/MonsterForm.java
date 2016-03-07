@@ -109,7 +109,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-		addComponents(name, description, island, upload, image, pictureAction, audioUpload, actions);
+		addComponents(actions, name, description, island, upload, image, pictureAction, audioUpload);
     }
     
     private void initIslandList(IslandRepository islandRepo) {
@@ -168,7 +168,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         setVisible(monster != null);
         
         if(monster != null) {
-        	Picture picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
+        	Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
         	showOrHidePicture(picture);
         	island.setValue(monster.getIsland());
         }
@@ -233,7 +233,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 				e.printStackTrace();
 			}
 			
-			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
+			picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
 			showOrHidePicture(picture);
 		}
 	}	

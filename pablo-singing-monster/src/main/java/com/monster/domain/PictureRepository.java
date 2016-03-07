@@ -10,10 +10,10 @@ public interface PictureRepository extends CrudRepository<Picture, Long> {
 	
 	List <Picture> findByMonster(Monster monster);
 	
-	Picture findByMonsterAndImageSizeAndMonsterNotNull(Monster monster, ImageSize imageSize);
+	List <Picture> findByIsland(Island island);
 	
-	Picture findByIslandAndImageSizeAndIslandNotNull(Island island, ImageSize imageSize);
+	Picture findByMonsterAndImageSize(Monster monster, ImageSize imageSize);
 	
-	//List <Picture> findByIslandAndImageSizeAndIslandNotNull(Island island, ImageSize imageSize);
+	Picture findByIslandAndImageSize(Island island, ImageSize imageSize);
 
 }
