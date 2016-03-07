@@ -105,23 +105,8 @@ public class Picture {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Picture [id=");
-		builder.append(id);
-		builder.append(", monster=");
-		builder.append(monster);
-		builder.append(", file=");
-		builder.append(Arrays.toString(file));
-		builder.append(", createDate=");
-		builder.append(createDate);
-		builder.append(", imageSize=");
-		builder.append(imageSize);
-		builder.append(", fileName=");
-		builder.append(fileName);
-		builder.append("]");
-		return builder.toString();
+		return "Picture [id=" + id + ", monster=" + monster + ", island=" + island + ", createDate=" + createDate
+				+ ", imageSize=" + imageSize + ", fileName=" + fileName + "]";
 	}
-	
-	
-	
+
 }

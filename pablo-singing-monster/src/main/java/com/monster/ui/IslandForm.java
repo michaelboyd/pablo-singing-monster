@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -82,7 +83,12 @@ public class IslandForm extends FormLayout implements FormConstants {
     
     private void configureComponents() {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);    	
+        save.setClickShortcut(ShortcutAction.KeyCode.ENTER); 
+        
+        image.setVisible(false);
+		upload.setButtonCaption("Start Upload");
+		upload.addSucceededListener(receiver);        
+        
     	setVisible(false);
 
     	name.setWidth("300px");
@@ -103,7 +109,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         setMargin(true);
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
         actions.setSpacing(true);
-    	addComponents(name, monsterList, actions);
+    	addComponents(name, monsterList, upload, image, actions);
     }    
 	
     void edit(Island island) {
@@ -116,6 +122,10 @@ public class IslandForm extends FormLayout implements FormConstants {
         loadMonsterList();
         monsterList.setVisible(true);
         setVisible(island != null);
+        if(island != null) {
+        	Picture picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.big);
+        	showOrHidePicture(picture);        	
+        }        
     }
     
     public void save(Button.ClickEvent event) {
@@ -155,6 +165,8 @@ public class IslandForm extends FormLayout implements FormConstants {
         setVisible(island != null);
         monsterList.setContainerDataSource(null);
         monsterList.setVisible(false);
+        showOrHidePicture(null);
+        upload.setVisible(false);        
     }    
     
     private void refreshIslandList() {
@@ -204,8 +216,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.thumb);
+			picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.thumb);
 			showOrHidePicture(picture);
 		}
 	}  

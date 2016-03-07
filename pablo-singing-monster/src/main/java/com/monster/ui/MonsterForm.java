@@ -161,7 +161,7 @@ public class MonsterForm extends FormLayout {
         setVisible(monster != null);
         
         if(monster != null) {
-        	Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
+        	Picture picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
         	showOrHidePicture(picture);
         	island.setValue(monster.getIsland());
         }
@@ -226,7 +226,7 @@ public class MonsterForm extends FormLayout {
 				e.printStackTrace();
 			}
 			
-			picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.thumb);
 			showOrHidePicture(picture);
 		}
 	}	
