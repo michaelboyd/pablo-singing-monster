@@ -194,7 +194,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 		public OutputStream receiveUpload(String filename, String mimeType) {
 			FileOutputStream fos = null;
 			try {
-				file = new File("tmp/uploads/" + filename);
+				file = new File(UPLOAD_FOLDER_IMAGE + filename);
 				fos = new FileOutputStream(file);
 			} catch (final java.io.FileNotFoundException e) {
 				new Notification("Could not open file", e.getMessage(),

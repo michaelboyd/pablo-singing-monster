@@ -46,7 +46,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
 @UIScope
-public class MonsterForm extends FormLayout {
+public class MonsterForm extends FormLayout implements FormConstants{
 
     private Button save = new Button("Save", this::save);
     private Button cancel = new Button("Cancel", this::cancel);
@@ -210,7 +210,7 @@ public class MonsterForm extends FormLayout {
 		public OutputStream receiveUpload(String filename, String mimeType) {
 			FileOutputStream fos = null;
 			try {
-				file = new File("tmp/uploads/" + filename);
+				file = new File(UPLOAD_FOLDER_IMAGE + filename);
 				fos = new FileOutputStream(file);
 			} catch (final java.io.FileNotFoundException e) {
 				new Notification("Could not open file", e.getMessage(),
@@ -246,7 +246,7 @@ public class MonsterForm extends FormLayout {
 		public OutputStream receiveUpload(String filename, String mimeType) {
 			FileOutputStream fos = null;
 			try {
-				file = new File("tmp/uploads/" + filename);
+				file = new File(UPLOAD_FOLDER_AUDIO + filename);
 				fos = new FileOutputStream(file);
 			} catch (final java.io.FileNotFoundException e) {
 				new Notification("Could not open file", e.getMessage(),
