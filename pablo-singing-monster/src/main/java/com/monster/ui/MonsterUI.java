@@ -65,13 +65,11 @@ public class MonsterUI extends UI {
         monsterList.removeColumn("id");                
         monsterList.setSelectionMode(Grid.SelectionMode.SINGLE);
         monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
-        //monsterList.sort("name");
         
         islandList.setContainerDataSource(new BeanItemContainer<>(Island.class));
         islandList.removeColumn("id");
         islandList.setSelectionMode(Grid.SelectionMode.SINGLE);
         islandList.addSelectionListener(e -> islandForm.edit((Island) islandList.getSelectedRow()));
-        //monsterList.sort("name");
         
 		listMonsters(null);
 		listIslands();
