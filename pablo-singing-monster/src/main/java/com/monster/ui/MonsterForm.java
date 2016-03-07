@@ -226,7 +226,7 @@ public class MonsterForm extends FormLayout {
 				e.printStackTrace();
 			}
 			
-			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.thumb);
+			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
 			showOrHidePicture(picture);
 		}
 	}	

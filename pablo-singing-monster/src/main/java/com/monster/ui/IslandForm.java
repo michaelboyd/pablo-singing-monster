@@ -216,7 +216,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.thumb);
+			picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.big);
 			showOrHidePicture(picture);
 		}
 	}  
