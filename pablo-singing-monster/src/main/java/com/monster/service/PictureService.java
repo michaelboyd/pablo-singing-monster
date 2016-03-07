@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Hashtable;
 
 import javax.media.jai.JAI;
 import javax.media.jai.OpImage;
@@ -37,6 +38,7 @@ public class PictureService {
     private static final String JAI_ENCODE_FORMAT_JPEG = "JPEG";
     private static final String JAI_ENCODE_ACTION = "encode";
     //private static final String JPEG_CONTENT_TYPE = "image/jpeg";
+    private Hashtable <ImageSize, Integer> typeSizeTable = new Hashtable <ImageSize, Integer>();
     
     /**
     * this gets rid of exception for not using native acceleration
@@ -54,42 +56,24 @@ public class PictureService {
 	public PictureService(@Value("${image_full_max_width}") int maxWidthFull,
 			@Value("${image_big_max_width}") int maxWidthBig,
 			@Value("${image_thumb_max_width}") int maxWidthThumb) {
-		this.maxWidthFull = maxWidthFull;
-		this.maxWidthBig = maxWidthBig;
-		this.maxWidthThumb = maxWidthThumb;
+		typeSizeTable.put(ImageSize.fullSize, maxWidthFull);
+		typeSizeTable.put(ImageSize.big, maxWidthBig);
+		typeSizeTable.put(ImageSize.thumb, maxWidthThumb);
 	}
 	
 	public void savePicture(Monster monster, byte[] fileData, String fileName) {	
-		
 		Picture picture = null;
-		
-		//thumb file
-		picture = new Picture();
-		picture.setMonster(monster);
-		picture.setImageSize(ImageSize.thumb);
-		picture.setCreateDate(new Date());
-		picture.setFile(resizeImageAsJPG(fileData, maxWidthThumb));
-		picture.setFileName(fileName);
-		pictureRepo.save(picture); 	
-		
-		//big file
-		picture = new Picture();
-		picture.setMonster(monster);
-		picture.setImageSize(ImageSize.big);
-		picture.setCreateDate(new Date());
-		picture.setFile(resizeImageAsJPG(fileData, maxWidthBig));
-		picture.setFileName(fileName);
-		pictureRepo.save(picture);		
-		
-		//full size file
-		picture = new Picture();
-		picture.setMonster(monster);
-		picture.setImageSize(ImageSize.fullSize);
-		picture.setCreateDate(new Date());
-		picture.setFile(resizeImageAsJPG(fileData, maxWidthFull));
-		picture.setFileName(fileName);
-		pictureRepo.save(picture);		
-		
+		ImageSize[] imageSizes = ImageSize.values();
+		//iterate over ImageTypes to save one of each
+		for(int i = 0; i < imageSizes.length; i++) {
+			picture = new Picture();
+			picture.setMonster(monster);
+			picture.setImageSize(imageSizes[i]);
+			picture.setCreateDate(new Date());
+			picture.setFile(resizeImageAsJPG(fileData, typeSizeTable.get(imageSizes[i])));
+			picture.setFileName(fileName);
+			pictureRepo.save(picture); 	
+		}
 	}
 	
     /**
