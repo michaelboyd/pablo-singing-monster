@@ -57,7 +57,7 @@ public class MonsterForm extends FormLayout {
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);  
-	private ComboBox island = new ComboBox("Islands");
+	private ComboBox islandDropDown = new ComboBox("Islands");
 
     private Monster monster;
     byte[] fileData;
@@ -103,13 +103,13 @@ public class MonsterForm extends FormLayout {
         HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-		addComponents(name, description, island, upload, image, pictureAction, actions);
+		addComponents(name, description, islandDropDown, upload, image, pictureAction, actions);
     }
     
     private void initIslandList(IslandRepository islandRepo) {
-		island.addItems(islandRepo
+		islandDropDown.addItems(islandRepo
 				.findAll(new Sort(Sort.Direction.ASC, "name")));
-        island.setNullSelectionAllowed(false);
+        islandDropDown.setNullSelectionAllowed(false);
     }   
 
     public void save(Button.ClickEvent event) {
@@ -162,7 +162,7 @@ public class MonsterForm extends FormLayout {
         Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
         if(monster != null) {
         	showOrHidePicture(picture);
-        	island.setValue(monster.getIsland());
+        	islandDropDown.setValue(monster.getIsland());
         }
     }
     
