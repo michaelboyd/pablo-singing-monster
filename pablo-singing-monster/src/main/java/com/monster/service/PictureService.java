@@ -16,6 +16,7 @@ import javax.media.jai.RenderedOp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.monster.domain.Island;
 import com.monster.domain.Monster;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
@@ -48,10 +49,6 @@ public class PictureService {
     	System.setProperty("com.sun.media.jai.disableMediaLib", "true");
     } 	
     
-	private int maxWidthFull;
-    private int maxWidthBig;
-	private int maxWidthThumb;	
-	
 	@Autowired
 	public PictureService(@Value("${image_full_max_width}") int maxWidthFull,
 			@Value("${image_big_max_width}") int maxWidthBig,
@@ -61,13 +58,18 @@ public class PictureService {
 		typeSizeTable.put(ImageSize.thumb, maxWidthThumb);
 	}
 	
-	public void savePicture(Monster monster, byte[] fileData, String fileName) {	
+	public void savePicture(Object entity, byte[] fileData, String fileName) {	
 		Picture picture = null;
 		ImageSize[] imageSizes = ImageSize.values();
 		//iterate over ImageTypes to save one of each
 		for(int i = 0; i < imageSizes.length; i++) {
 			picture = new Picture();
-			picture.setMonster(monster);
+			if(entity instanceof Monster) {
+				picture.setMonster((Monster)entity);
+			}
+			else if(entity instanceof Island) {
+				picture.setIsland((Island)entity);
+			}
 			picture.setImageSize(imageSizes[i]);
 			picture.setCreateDate(new Date());
 			picture.setFile(resizeImageAsJPG(fileData, typeSizeTable.get(imageSizes[i])));

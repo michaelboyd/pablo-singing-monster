@@ -17,7 +17,9 @@ import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
+import com.monster.domain.PictureRepository;
 import com.monster.service.PictureService;
+import com.monster.utils.ImageSize;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
@@ -64,6 +66,9 @@ public class IslandForm extends FormLayout implements FormConstants {
     
     @Autowired
     private PictureService pictureService;
+    
+    @Autowired
+    private PictureRepository pictureRepo;
     
     private MonsterRepository monsterRepo;
     
@@ -194,14 +199,14 @@ public class IslandForm extends FormLayout implements FormConstants {
 			try {
 				byte[] fileData = Files.readAllBytes(path);
 	            if(fileData != null && fileData.length > 0) {
-	            	//pictureService.savePicture(island, fileData, event.getFilename());
+	            	pictureService.savePicture(island, fileData, event.getFilename());
 	            }				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			
-			//picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
-			//showOrHidePicture(picture);
+			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.thumb);
+			showOrHidePicture(picture);
 		}
 	}  
 	

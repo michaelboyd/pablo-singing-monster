@@ -53,9 +53,21 @@ public class Application extends SpringBootServletInitializer{
 			//islands
 			String islandNames[] = {"Monstro-city", "IslandNumberTwo"};
 			
+			Island islandEntity = null;
+			
 			for(int i=0; i<islandNames.length; i++) {
 				if(islandRepo.findByNameOrderByNameAsc(islandNames[i]) == null) {
-					islandRepo.save(new Island(islandNames[i]));
+					islandEntity = new Island(islandNames[i]);
+					islandRepo.save(islandEntity);
+					//save the picture
+					try {
+						Path path = Paths.get("test-image/test.jpg");
+						byte[] file = Files.readAllBytes(path);
+						pictureService.savePicture(islandEntity, file, "test.jpg");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
 				}
 			}
 			
@@ -69,17 +81,15 @@ public class Application extends SpringBootServletInitializer{
 				if(monsterRepo.findByName(monsterNames[i]).isEmpty()) {
 					m = new Monster(monsterNames[i], "", island1);
 					monsterRepo.save(m);
+					//save the picture
+					try {
+						Path path = Paths.get("test-image/test.jpg");
+						byte[] file = Files.readAllBytes(path);
+						pictureService.savePicture(m, file, "test.jpg");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-				
-				//save the picture
-				try {
-					Path path = Paths.get("test-image/test.jpg");
-					byte[] file = Files.readAllBytes(path);
-					pictureService.savePicture(m, file, "test.jpg");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}				
-				
 			}
 			
 			//persist the island to update monsters
