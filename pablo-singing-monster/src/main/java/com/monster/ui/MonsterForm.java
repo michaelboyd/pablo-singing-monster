@@ -74,7 +74,7 @@ public class MonsterForm extends FormLayout {
 	public PictureService pictureService;
 	
     private BeanFieldGroup <Monster> formFieldBindings;
-
+    
     @Autowired
     public MonsterForm(IslandRepository islandRepo) {
         configureComponents();
@@ -124,12 +124,13 @@ public class MonsterForm extends FormLayout {
             monsterRepo.save(monster);
 			String msg = String.format("Saved '%s'.", monster.getName());
             Notification.show(msg,Type.TRAY_NOTIFICATION);
-            refreshMonsterList();
+            refreshMonsterList();            
             name.setValue("");
             description.setValue("");
             setVisible(false);
 			image.setVisible(false);
 			image.setSource(null);
+			getUI().listIslands();
         } catch (FieldGroup.CommitException e) {
             // Validation exceptions could be shown here
         }
