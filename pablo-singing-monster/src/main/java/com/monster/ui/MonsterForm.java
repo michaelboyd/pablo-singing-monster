@@ -58,6 +58,8 @@ public class MonsterForm extends FormLayout {
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);  
 	private ComboBox island = new ComboBox("Islands");
+	private AudioUploader audioReceiver = new AudioUploader();
+	private Upload audioUpload = new Upload("Upload Audio", audioReceiver);
 
     private Monster monster;
     byte[] fileData;
@@ -85,7 +87,11 @@ public class MonsterForm extends FormLayout {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         image.setVisible(false);
 		upload.setButtonCaption("Start Upload");
-		upload.addSucceededListener(receiver);        
+		upload.addSucceededListener(receiver);    
+		
+		audioUpload.setButtonCaption("Start Upload");
+		audioUpload.addSucceededListener(audioReceiver);
+		
 		setVisible(false);
     	name.setWidth("300px");
         name.setRequired(true);
@@ -103,7 +109,7 @@ public class MonsterForm extends FormLayout {
         HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-		addComponents(name, description, island, upload, image, pictureAction, actions);
+		addComponents(name, description, island, upload, image, pictureAction, audioUpload, actions);
     }
     
     private void initIslandList(IslandRepository islandRepo) {
@@ -228,6 +234,42 @@ public class MonsterForm extends FormLayout {
 			
 			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
 			showOrHidePicture(picture);
+		}
+	}	
+	
+	class AudioUploader implements Receiver, SucceededListener {
+
+		private static final long serialVersionUID = 8684994998768778621L;
+		public File file;
+
+		public OutputStream receiveUpload(String filename, String mimeType) {
+			FileOutputStream fos = null;
+			try {
+				file = new File("tmp/uploads/" + filename);
+				fos = new FileOutputStream(file);
+			} catch (final java.io.FileNotFoundException e) {
+				new Notification("Could not open file", e.getMessage(),
+						Notification.Type.ERROR_MESSAGE)
+						.show(Page.getCurrent());
+				return null;
+			}
+			return fos;
+		}
+
+		public void uploadSucceeded(SucceededEvent event) {
+//			Path path = Paths.get(file.getPath());
+//			Picture picture = null;
+//			try {
+//				byte[] fileData = Files.readAllBytes(path);
+//	            if(fileData != null && fileData.length > 0) {
+//	            	pictureService.savePicture(monster, fileData, event.getFilename());
+//	            }				
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			
+//			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
+//			showOrHidePicture(picture);
 		}
 	}	
 	
