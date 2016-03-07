@@ -120,7 +120,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         }
         delete.setVisible(true);
         loadMonsterList();
-        monsterList.setVisible(true);
+        monsterList.setVisible(monsterList.size() > 0);
         setVisible(island != null);
         if(island != null) {
         	Picture picture = pictureRepo.findByIslandAndImageSizeAndIslandNotNull(island, ImageSize.big);
