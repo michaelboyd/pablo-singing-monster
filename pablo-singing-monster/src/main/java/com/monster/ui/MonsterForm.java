@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
@@ -60,6 +61,31 @@ public class MonsterForm extends FormLayout implements FormConstants{
 	private ComboBox island = new ComboBox("Islands");
 	private AudioUploader audioReceiver = new AudioUploader();
 	private Upload audioUpload = new Upload("Upload Audio", audioReceiver);
+	
+	/*
+	 * private void addBasicExample() {
+	Button button = new Button("Basic");
+	button.setDebugId("basic");
+	button.addListener(new Button.ClickListener() {
+		public void buttonClick(ClickEvent event) {
+			// The quickest way to confirm
+			ConfirmDialog.show(getMainWindow(), "Are you sure?",
+			        new ConfirmDialog.Listener() {
+
+			            public void onClose(ConfirmDialog dialog) {
+			                if (dialog.isConfirmed()) {
+			                    // Confirmed to continue
+								// DO STUFF
+			                } else {
+			                    // User did not confirm
+								// CANCEL STUFF
+			                }
+			            }
+			        });
+		}
+	});
+
+	 */
 
     private Monster monster;
     byte[] fileData;
@@ -145,18 +171,30 @@ public class MonsterForm extends FormLayout implements FormConstants{
     }
     
     public void delete(Button.ClickEvent event) {
-    	monsterRepo.delete(monster);
-        Notification.show("Deleted",Type.TRAY_NOTIFICATION);    	
-        refreshMonsterList();  	
+		ConfirmDialog.show(getUI(), "Delete the Monster?", new ConfirmDialog.Listener() {
+			public void onClose(ConfirmDialog dialog) {
+				if (dialog.isConfirmed()) {
+			    	monsterRepo.delete(monster);
+			        Notification.show("Deleted",Type.TRAY_NOTIFICATION);    	
+			        refreshMonsterList();
+				}
+			}
+		});    	
     }
     
-    public void deletePicture(Button.ClickEvent event) {
-    	List <Picture> pictures = pictureRepo.findByMonster(monster);
-    	for(Picture picture : pictures) {
-    		pictureRepo.delete(picture);
-    	}
-    	showOrHidePicture(null);
-    }
+	public void deletePicture(Button.ClickEvent event) {
+		ConfirmDialog.show(getUI(), "Delete the Monster's Picture?", new ConfirmDialog.Listener() {
+			public void onClose(ConfirmDialog dialog) {
+				if (dialog.isConfirmed()) {
+					List<Picture> pictures = pictureRepo.findByMonster(monster);
+					for (Picture picture : pictures) {
+						pictureRepo.delete(picture);
+					}
+					showOrHidePicture(null);
+				}
+			}
+		});
+	}
 
     void edit(Monster monster) {
         this.monster = monster;

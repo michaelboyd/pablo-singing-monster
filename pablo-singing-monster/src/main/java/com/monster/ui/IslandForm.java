@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
@@ -152,17 +153,28 @@ public class IslandForm extends FormLayout implements FormConstants {
     }
     
     public void delete(Button.ClickEvent event) {
-    	islandRepo.delete(island);
-        Notification.show(DELETED_NOTIFICATION_LABEL,Type.TRAY_NOTIFICATION);    	
-        refreshIslandList();  	
+		ConfirmDialog.show(getUI(), "Delete the Island?", new ConfirmDialog.Listener() {
+			public void onClose(ConfirmDialog dialog) {
+				if (dialog.isConfirmed()) {
+			    	islandRepo.delete(island);
+			        Notification.show(DELETED_NOTIFICATION_LABEL,Type.TRAY_NOTIFICATION);    	
+			        refreshIslandList(); 				}
+			}
+		});    	
     } 
     
     public void deletePicture(Button.ClickEvent event) {
-    	List <Picture> pictures = pictureRepo.findByIsland(island);
-    	for(Picture picture : pictures) {
-    		pictureRepo.delete(picture);
-    	}
-    	showOrHidePicture(null);
+		ConfirmDialog.show(getUI(), "Delete the Island's Picture?", new ConfirmDialog.Listener() {
+			public void onClose(ConfirmDialog dialog) {
+				if (dialog.isConfirmed()) {
+			    	List <Picture> pictures = pictureRepo.findByIsland(island);
+			    	for(Picture picture : pictures) {
+			    		pictureRepo.delete(picture);
+			    	}
+			    	showOrHidePicture(null);
+				}
+			}
+		});    	
     }    
     
     void add(Island island) {
