@@ -13,10 +13,14 @@ public class AudioTest extends VerticalLayout{
 	
 	//this is from http://massapi.com/source/github/49/25/49255846/uitest/src/com/vaadin/tests/components/media/AudioTest.java.html#41
 
+	public AudioTest() {
+		setup();
+	}
+	
 	protected void setup() {
 
 		// Public domain sounds from pdsounds.org 27.2.2013
-		final Resource[] s1 = { new ClassResource(getClass(), "bip.mp3"), new ClassResource(getClass(), "bip.ogg") };
+		final Resource[] s1 = { new ClassResource(getClass(), "06 I Am.m4a") };
 		final Resource[] s2 = {	new ClassResource(getClass(), "toyphone_dialling.mp3"),	new ClassResource(getClass(), "toyphone_dialling.ogg") };
 
 		final Audio audio = new Audio();
@@ -24,7 +28,7 @@ public class AudioTest extends VerticalLayout{
 		audio.setShowControls(true);
 		audio.setHtmlContentAllowed(true);
 		audio.setAltText("Can't <b>play</b> media");
-		audio.setAutoplay(true);
+		audio.setAutoplay(false);
 
 		addComponent(audio);
 
