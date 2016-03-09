@@ -43,7 +43,7 @@ public class MonsterUI extends UI {
 	
 	
 	// Some UI logic to open the sub-window
-	final Button open = new Button("Open Sub-Window");
+	final Button pictureSubWindow = new Button("Open Sub-Window");
 	
 	
 	@Autowired
@@ -61,6 +61,7 @@ public class MonsterUI extends UI {
 		buildLayout();
 	}
 
+	@SuppressWarnings("serial")
 	private void configureComponents() {
 		
 		addNewBtn.addClickListener(e -> monsterForm.add(new Monster("","", null)));
@@ -84,10 +85,9 @@ public class MonsterUI extends UI {
 		listMonsters(null);
 		listIslands();
 		
-		open.addClickListener(new ClickListener() {
+		pictureSubWindow.addClickListener(new ClickListener() {
 		    public void buttonClick(ClickEvent event) {
 		        MySub sub = new MySub();
-
 		        // Add it to the root component
 		        UI.getCurrent().addWindow(sub);
 		    }
@@ -131,7 +131,7 @@ public class MonsterUI extends UI {
         tabsheet.addTab(islandLayout).setCaption("Edit Islands");
         tabsheet.addTab(mainLayout).setCaption("Edit Monsters");
         tabsheet.addTab(audioTest).setCaption("Audio Test");
-        tabsheet.addTab(open).setCaption("Sub-Window Test");
+        tabsheet.addTab(pictureSubWindow).setCaption("Sub-Window Test");
         setContent(tabsheet);
 		
 	}
