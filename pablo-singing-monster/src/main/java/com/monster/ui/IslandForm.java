@@ -32,17 +32,23 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
@@ -56,6 +62,10 @@ public class IslandForm extends FormLayout implements FormConstants {
 	private TextField name = new TextField("Name");
 	Table monsterList = new Table("Monsters");
 	private final Embedded image = new Embedded("Uploaded Picture");
+	
+	private final Image i = new Image("");
+	
+	
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);  
 	
@@ -87,8 +97,16 @@ public class IslandForm extends FormLayout implements FormConstants {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER); 
         
+        image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
+		    public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
+		        MySub sub = new MySub();
+		        // Add it to the root component
+		        UI.getCurrent().addWindow(sub);
+		    }
+		});
         image.setVisible(false);
-		upload.setButtonCaption("Start Upload");
+
+        upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);        
         
     	setVisible(false);
@@ -105,6 +123,36 @@ public class IslandForm extends FormLayout implements FormConstants {
         
         loadMonsterList();
     } 
+    
+	// Define a sub-window by inheritance
+	class MySub extends Window {
+	    public MySub() {
+	        super(island.getName()); // Set window caption
+	        center();
+	        setModal(true);
+	        setClosable(true);
+	        
+	        Embedded image = new Embedded();	  
+	        Picture picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
+			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			image.setVisible(true);
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
+	        
+	        VerticalLayout content = new VerticalLayout();
+			content.addComponent(image);
+			content.setMargin(true);			
+	        setContent(content);			
+
+	        // Trivial logic for closing the sub-window
+	        Button ok = new Button("Close");
+	        ok.addClickListener(new ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	                close(); // Close the sub-window
+	            }
+	        });
+	        content.addComponent(ok);
+	    }
+	}    
     
     private void buildLayout() {
         setSizeUndefined();

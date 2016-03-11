@@ -31,6 +31,8 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
@@ -39,10 +41,13 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
@@ -62,31 +67,6 @@ public class MonsterForm extends FormLayout implements FormConstants{
 	private AudioUploader audioReceiver = new AudioUploader();
 	private Upload audioUpload = new Upload("Upload Audio", audioReceiver);
 	
-	/*
-	 * private void addBasicExample() {
-	Button button = new Button("Basic");
-	button.setDebugId("basic");
-	button.addListener(new Button.ClickListener() {
-		public void buttonClick(ClickEvent event) {
-			// The quickest way to confirm
-			ConfirmDialog.show(getMainWindow(), "Are you sure?",
-			        new ConfirmDialog.Listener() {
-
-			            public void onClose(ConfirmDialog dialog) {
-			                if (dialog.isConfirmed()) {
-			                    // Confirmed to continue
-								// DO STUFF
-			                } else {
-			                    // User did not confirm
-								// CANCEL STUFF
-			                }
-			            }
-			        });
-		}
-	});
-
-	 */
-
     private Monster monster;
     byte[] fileData;
     
@@ -111,8 +91,17 @@ public class MonsterForm extends FormLayout implements FormConstants{
     private void configureComponents() {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        
+        image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
+		    public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
+		        MySub sub = new MySub();
+		        // Add it to the root component
+		        UI.getCurrent().addWindow(sub);
+		    }
+		});
         image.setVisible(false);
-		upload.setButtonCaption("Start Upload");
+		
+        upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);    
 		
 		audioUpload.setButtonCaption("Start Upload");
@@ -310,6 +299,36 @@ public class MonsterForm extends FormLayout implements FormConstants{
 //			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
 //			showOrHidePicture(picture);
 		}
+	}
+	
+	// Define a sub-window by inheritance
+	class MySub extends Window {
+	    public MySub() {
+	        super(monster.getName()); // Set window caption
+	        center();
+	        setModal(true);
+	        setClosable(true);
+	        
+	        Embedded image = new Embedded();	  
+	        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.fullSize);
+			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			image.setVisible(true);
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
+	        
+	        VerticalLayout content = new VerticalLayout();
+			content.addComponent(image);
+			content.setMargin(true);			
+	        setContent(content);			
+
+	        // Trivial logic for closing the sub-window
+	        Button ok = new Button("Close");
+	        ok.addClickListener(new ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	                close(); // Close the sub-window
+	            }
+	        });
+	        content.addComponent(ok);
+	    }
 	}	
 	
 	public class MyImageSource implements StreamResource.StreamSource {
