@@ -62,15 +62,10 @@ public class IslandForm extends FormLayout implements FormConstants {
 	private TextField name = new TextField("Name");
 	Table monsterList = new Table("Monsters");
 	private final Embedded image = new Embedded("Uploaded Picture");
-	
-	private final Image i = new Image("");
-	
-	
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);  
 	
-	
-	 private Island island;
+	private Island island;
 	
     private BeanFieldGroup <Island> formFieldBindings;	
     
@@ -100,7 +95,6 @@ public class IslandForm extends FormLayout implements FormConstants {
         image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
 		    public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
 		        MySub sub = new MySub();
-		        // Add it to the root component
 		        UI.getCurrent().addWindow(sub);
 		    }
 		});
@@ -124,44 +118,14 @@ public class IslandForm extends FormLayout implements FormConstants {
         loadMonsterList();
     } 
     
-	// Define a sub-window by inheritance
-	class MySub extends Window {
-	    public MySub() {
-	        super(island.getName()); // Set window caption
-	        center();
-	        setModal(true);
-	        setClosable(true);
-	        
-	        Embedded image = new Embedded();	  
-	        Picture picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
-			image.setVisible(true);
-			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
-	        
-	        VerticalLayout content = new VerticalLayout();
-			content.addComponent(image);
-			content.setMargin(true);			
-	        setContent(content);			
-
-	        // Trivial logic for closing the sub-window
-	        Button ok = new Button("Close");
-	        ok.addClickListener(new ClickListener() {
-	            public void buttonClick(ClickEvent event) {
-	                close(); // Close the sub-window
-	            }
-	        });
-	        content.addComponent(ok);
-	    }
-	}    
-    
     private void buildLayout() {
         setSizeUndefined();
         setMargin(true);
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
-        HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
+        HorizontalLayout pictureAction = new HorizontalLayout(monsterList, deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-    	addComponents(actions, name, monsterList, upload, image, pictureAction);
+    	addComponents(name, pictureAction, upload, image, actions);
     }    
 	
     void edit(Island island) {
@@ -201,7 +165,7 @@ public class IslandForm extends FormLayout implements FormConstants {
     }
     
     public void delete(Button.ClickEvent event) {
-		ConfirmDialog.show(getUI(), "Delete the Island?", new ConfirmDialog.Listener() {
+		ConfirmDialog.show(getUI(), "Do you really want to Delete the Island: " + island.getName() + " ?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
 			    	islandRepo.delete(island);
@@ -212,7 +176,7 @@ public class IslandForm extends FormLayout implements FormConstants {
     } 
     
     public void deletePicture(Button.ClickEvent event) {
-		ConfirmDialog.show(getUI(), "Delete the Island's Picture?", new ConfirmDialog.Listener() {
+		ConfirmDialog.show(getUI(), "Do you really want to Delete the Picture for Island: " + island.getName() + "?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
 			    	List <Picture> pictures = pictureRepo.findByIsland(island);
@@ -308,6 +272,36 @@ public class IslandForm extends FormLayout implements FormConstants {
 			}
 		}
 	}
+	
+	// Define a sub-window by inheritance
+	class MySub extends Window {
+	    public MySub() {
+	        super(island.getName()); // Set window caption
+	        center();
+	        setModal(true);
+	        setClosable(true);
+	        
+	        Embedded image = new Embedded();	  
+	        Picture picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
+			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			image.setVisible(true);
+			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
+	        
+	        VerticalLayout content = new VerticalLayout();
+			content.addComponent(image);
+			content.setMargin(true);			
+	        setContent(content);			
+
+	        // Trivial logic for closing the sub-window
+	        Button ok = new Button("Close");
+	        ok.addClickListener(new ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	                close(); // Close the sub-window
+	            }
+	        });
+	        content.addComponent(ok);
+	    }
+	}	
 	
     private void showOrHidePicture(Picture picture) {
 		if (picture != null) {

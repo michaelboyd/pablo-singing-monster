@@ -63,7 +63,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
 	private Upload upload = new Upload("Upload Picture", receiver);  
-	private ComboBox island = new ComboBox("Islands");
+	private ComboBox islandList = new ComboBox("Islands");
 	private AudioUploader audioReceiver = new AudioUploader();
 	private Upload audioUpload = new Upload("Upload Audio", audioReceiver);
 	
@@ -121,16 +121,16 @@ public class MonsterForm extends FormLayout implements FormConstants{
         setSizeUndefined();
         setMargin(true);
         HorizontalLayout actions = new HorizontalLayout(save, delete, cancel);
-        HorizontalLayout pictureAction = new HorizontalLayout(deletePicture);
+        HorizontalLayout pictureAction = new HorizontalLayout(islandList, deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-		addComponents(actions, name, description, island, upload, image, pictureAction, audioUpload);
+        addComponents(name, description, pictureAction, upload, image, audioUpload, actions);
     }
     
     private void initIslandList(IslandRepository islandRepo) {
-		island.addItems(islandRepo
+		islandList.addItems(islandRepo
 				.findAll(new Sort(Sort.Direction.ASC, "name")));
-        island.setNullSelectionAllowed(false);
+        islandList.setNullSelectionAllowed(false);
     }   
 
     public void save(Button.ClickEvent event) {
@@ -197,7 +197,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         if(monster != null) {
         	Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
         	showOrHidePicture(picture);
-        	island.setValue(monster.getIsland());
+        	islandList.setValue(monster.getIsland());
         }
     }
     
