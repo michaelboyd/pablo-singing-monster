@@ -16,16 +16,12 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 
 @SpringUI
 @Theme("valo")
@@ -40,11 +36,6 @@ public class MonsterUI extends UI {
 	private final IslandRepository islandRepo;
 	private final MonsterForm monsterForm;
 	private final IslandForm islandForm;
-	
-	
-	// Some UI logic to open the sub-window
-	final Button pictureSubWindow = new Button("Open Sub-Window");
-	
 	
 	@Autowired
 	public MonsterUI(MonsterRepository repo, MonsterForm monsterForm,
@@ -85,14 +76,6 @@ public class MonsterUI extends UI {
 		listMonsters(null);
 		listIslands();
 		
-		pictureSubWindow.addClickListener(new ClickListener() {
-		    public void buttonClick(ClickEvent event) {
-		        MySub sub = new MySub();
-		        // Add it to the root component
-		        UI.getCurrent().addWindow(sub);
-		    }
-		});		
-		
 	}
 	
 	private void buildLayout() {
@@ -131,7 +114,6 @@ public class MonsterUI extends UI {
         tabsheet.addTab(islandLayout).setCaption("Edit Islands");
         tabsheet.addTab(mainLayout).setCaption("Edit Monsters");
         tabsheet.addTab(audioTest).setCaption("Audio Test");
-        tabsheet.addTab(pictureSubWindow).setCaption("Sub-Window Test");
         setContent(tabsheet);
 		
 	}
@@ -156,31 +138,4 @@ public class MonsterUI extends UI {
 		return filter;
 	}
 	
-	// Define a sub-window by inheritance
-	class MySub extends Window {
-	    public MySub() {
-	        super("Subs on Sale"); // Set window caption
-	        center();
-	        setModal(true);
-
-	        // Some basic content for the window
-	        VerticalLayout content = new VerticalLayout();
-	        content.addComponent(new Label("Just say it's OK!"));
-	        content.setMargin(true);
-	        setContent(content);
-
-	        // Disable the close button
-	        setClosable(false);
-
-	        // Trivial logic for closing the sub-window
-	        Button ok = new Button("OK");
-	        ok.addClickListener(new ClickListener() {
-	            public void buttonClick(ClickEvent event) {
-	                close(); // Close the sub-window
-	            }
-	        });
-	        content.addComponent(ok);
-	    }
-	}	
-
 }
