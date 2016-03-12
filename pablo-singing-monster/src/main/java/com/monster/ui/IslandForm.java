@@ -205,7 +205,13 @@ public class IslandForm extends FormLayout implements FormConstants {
     }    
     
     private void refreshIslandList() {
-		getUI().listIslands();  
+        String filterValue = getUI().getIslandFilter().getValue();
+		
+        if (filterValue == null || "".equals(filterValue)) {
+			getUI().listIslands(null);  
+		} else {
+			getUI().listIslands(filterValue);
+		}  
     }
     
 	private void loadMonsterList() {

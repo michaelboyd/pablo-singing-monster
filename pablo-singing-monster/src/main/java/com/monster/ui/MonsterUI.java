@@ -31,7 +31,9 @@ public class MonsterUI extends UI {
 	private final Table monsterTable = new Table("Monsters");
 	private final Table islandTable = new Table("Islands");
 	
-	private final TextField filter = new TextField();
+	private final TextField monsterFilter = new TextField();
+	private final TextField islandFilter = new TextField();
+	
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
 	private final Button addIslandButton = new Button("New Island", FontAwesome.PLUS);
 	private final MonsterRepository repo;
@@ -54,25 +56,23 @@ public class MonsterUI extends UI {
 		buildLayout();
 	}
 
-	@SuppressWarnings("serial")
 	private void configureComponents() {
-		
 		addNewBtn.addClickListener(e -> monsterForm.add(new Monster("","", null)));
 		addIslandButton.addClickListener(e -> islandForm.add(new Island("")));
-		
-		filter.setInputPrompt("Filter by Name");
-		filter.addTextChangeListener(e -> listMonsters(e.getText()));
-
+		monsterFilter.setInputPrompt("Filter by Monster Name");
+		monsterFilter.addTextChangeListener(e -> listMonsters(e.getText()));
+		islandFilter.setInputPrompt("Filter by Island Name");
+		islandFilter.addTextChangeListener(e -> listIslands(e.getText()));		
 		listMonsters(null);
-        listIslands();
+        listIslands(null);
 	}
 	
 	private void buildLayout() {
 		
-		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
+		HorizontalLayout actions = new HorizontalLayout(monsterFilter, addNewBtn);
         actions.setWidth("100%");
-        filter.setWidth("100%");
-        actions.setExpandRatio(filter, 1);
+        monsterFilter.setWidth("100%");
+        actions.setExpandRatio(monsterFilter, 1);
 
         VerticalLayout left = new VerticalLayout(actions, monsterTable);
         left.setSizeFull();
@@ -83,9 +83,10 @@ public class MonsterUI extends UI {
         mainLayout.setSizeFull();
         mainLayout.setExpandRatio(left, 1);
         
-		HorizontalLayout islandActions = new HorizontalLayout(addIslandButton);
+		HorizontalLayout islandActions = new HorizontalLayout(islandFilter, addIslandButton);
 		islandActions.setWidth("100%");
-		islandActions.setComponentAlignment(addIslandButton, Alignment.MIDDLE_RIGHT);
+		islandFilter.setWidth("100%");
+		islandActions.setExpandRatio(islandFilter, 1);
 		
         VerticalLayout islands = new VerticalLayout(islandActions, islandTable);
         islands.setSizeFull();
@@ -125,9 +126,15 @@ public class MonsterUI extends UI {
         monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
 	}
 	
-	protected void listIslands() {
-		islandTable.setContainerDataSource(new BeanItemContainer<Island>(
-				Island.class, islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))));
+	protected void listIslands(String text) {
+		if(StringUtils.isEmpty(text)) {
+			islandTable.setContainerDataSource(new BeanItemContainer<Island>(
+					Island.class, islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))));
+		}
+		else {
+			islandTable.setContainerDataSource(new BeanItemContainer<Island>(Island.class,
+					islandRepo.findByNameStartsWithIgnoreCase(text)));			
+		}
       islandTable.setVisibleColumns(new Object[] {"name"});
       islandTable.setColumnHeaders(new String[] { "Name" });
       islandTable.setPageLength(10);
@@ -137,8 +144,12 @@ public class MonsterUI extends UI {
       islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
 	}
 
-	TextField getFilter() {
-		return filter;
+	protected TextField getMonsterFilter() {
+		return monsterFilter;
+	}
+	
+	protected TextField getIslandFilter() {
+		return islandFilter;
 	}
 	
 }

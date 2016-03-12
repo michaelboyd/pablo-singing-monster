@@ -145,7 +145,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
             setVisible(false);
 			image.setVisible(false);
 			image.setSource(null);
-			getUI().listIslands();
+			getUI().listIslands(null);
         } catch (FieldGroup.CommitException e) {
             // Validation exceptions could be shown here
         }
@@ -215,7 +215,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
     }
     
     private void refreshMonsterList() {
-        String filterValue = getUI().getFilter().getValue();
+        String filterValue = getUI().getMonsterFilter().getValue();
 		
         if (filterValue == null || "".equals(filterValue)) {
 			getUI().listMonsters(null);  
