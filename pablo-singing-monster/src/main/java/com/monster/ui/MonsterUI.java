@@ -64,22 +64,7 @@ public class MonsterUI extends UI {
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));
 
 		listMonsters(null);
-        monsterList.setVisibleColumns(new Object[] {"name", "description", "island"});
-        monsterList.setColumnHeaders(new String[] { "Name", "Description", "Island" });
-        monsterList.setPageLength(15);
-        monsterList.setSelectable(true);
-        monsterList.setImmediate(true);        
-        monsterList.setNullSelectionAllowed(true);
-        monsterList.addValueChangeListener(e -> monsterForm.edit((Monster) monsterList.getValue()));
-
         listIslands();
-        islandList.setVisibleColumns(new Object[] {"name"});
-        islandList.setColumnHeaders(new String[] { "Name" });
-        islandList.setPageLength(10);
-        islandList.setSelectable(true);
-        islandList.setImmediate(true);        
-        islandList.setNullSelectionAllowed(true);
-        islandList.addValueChangeListener(e -> islandForm.edit((Island) islandList.getValue()));
 	}
 	
 	private void buildLayout() {
@@ -131,11 +116,25 @@ public class MonsterUI extends UI {
 			monsterList.setContainerDataSource(new BeanItemContainer<Monster>(Monster.class,
 					repo.findByNameStartsWithIgnoreCase(text)));
 		}
+        monsterList.setVisibleColumns(new Object[] {"name", "description", "island"});
+        monsterList.setColumnHeaders(new String[] { "Name", "Description", "Island" });
+        monsterList.setPageLength(15);
+        monsterList.setSelectable(true);
+        monsterList.setImmediate(true);        
+        monsterList.setNullSelectionAllowed(true);
+        monsterList.addValueChangeListener(e -> monsterForm.edit((Monster) monsterList.getValue()));		
 	}
 	
 	protected void listIslands() {
 		islandList.setContainerDataSource(new BeanItemContainer<Island>(
 				Island.class, islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))));
+      islandList.setVisibleColumns(new Object[] {"name"});
+      islandList.setColumnHeaders(new String[] { "Name" });
+      islandList.setPageLength(10);
+      islandList.setSelectable(true);
+      islandList.setImmediate(true);        
+      islandList.setNullSelectionAllowed(true);
+      islandList.addValueChangeListener(e -> islandForm.edit((Island) islandList.getValue()));		
 	}
 
 	TextField getFilter() {

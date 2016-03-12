@@ -137,7 +137,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         try {
         	formFieldBindings.commit();
             monsterRepo.save(monster);
-			String msg = String.format("Saved '%s'.", monster.getName());
+			String msg = String.format(SAVED_NOTIFICATION_LABEL + " '%s'.", monster.getName());
             Notification.show(msg,Type.TRAY_NOTIFICATION);
             refreshMonsterList();            
             name.setValue("");
@@ -155,7 +155,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
     	setVisible(false);
     	image.setSource(null);
     	image.setVisible(false);
-        Notification.show("Cancelled", Type.TRAY_NOTIFICATION);
+        Notification.show(CANCELED_NOTIFICATION_LABEL, Type.TRAY_NOTIFICATION);
         refreshMonsterList();
     }
     
@@ -164,7 +164,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
 			    	monsterRepo.delete(monster);
-			        Notification.show("Deleted",Type.TRAY_NOTIFICATION);    	
+			        Notification.show(DELETED_NOTIFICATION_LABEL, Type.TRAY_NOTIFICATION);    	
 			        refreshMonsterList();
 				}
 			}
