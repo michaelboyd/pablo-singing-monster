@@ -1,6 +1,5 @@
 package com.monster.domain;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.persistence.Basic;
