@@ -16,9 +16,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -27,8 +27,9 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("valo")
 public class MonsterUI extends UI {
 	
-	private final Grid monsterList = new Grid();
-	private final Grid islandList = new Grid();
+	private final Table monsterList = new Table("Monsters");
+	private final Table islandList = new Table("Islands");
+	
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
 	private final Button addIslandButton = new Button("New Island", FontAwesome.PLUS);
@@ -62,17 +63,19 @@ public class MonsterUI extends UI {
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));
 
         monsterList.setContainerDataSource(new BeanItemContainer<>(Monster.class));
-        
-        monsterList.setColumnOrder("name", "description");
-        monsterList.removeColumn("id");                
-        monsterList.setSelectionMode(Grid.SelectionMode.SINGLE);
-        monsterList.addSelectionListener(e -> monsterForm.edit((Monster) monsterList.getSelectedRow()));
+        monsterList.setPageLength(10);
+        monsterList.setSelectable(true);
+        monsterList.setImmediate(true);        
+        monsterList.setNullSelectionAllowed(false);
+        monsterList.addValueChangeListener(e -> monsterForm.edit((Monster) monsterList.getValue()));
         
         islandList.setContainerDataSource(new BeanItemContainer<>(Island.class));
-        islandList.removeColumn("id");
-        islandList.setSelectionMode(Grid.SelectionMode.SINGLE);
-        islandList.addSelectionListener(e -> islandForm.edit((Island) islandList.getSelectedRow()));
-        
+        islandList.setPageLength(10);
+        islandList.setSelectable(true);
+        islandList.setImmediate(true);        
+        islandList.setNullSelectionAllowed(false);
+        islandList.addValueChangeListener(e -> islandForm.edit((Island) islandList.getValue()));
+
 		listMonsters(null);
 		listIslands();
 		

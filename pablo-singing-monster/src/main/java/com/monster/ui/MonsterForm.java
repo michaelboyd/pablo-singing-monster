@@ -189,7 +189,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         this.monster = monster;
         if(monster != null) {
             formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
-            name.focus();
+            //name.focus();
         }
         delete.setVisible(true);
         setVisible(monster != null);

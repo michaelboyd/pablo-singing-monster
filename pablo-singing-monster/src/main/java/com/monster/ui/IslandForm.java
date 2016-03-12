@@ -132,7 +132,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         this.island = island;
         if(island != null) {
             formFieldBindings = BeanFieldGroup.bindFieldsBuffered(island, this);
-            name.focus();
+            //name.focus();
         }
         delete.setVisible(true);
         loadMonsterList();
