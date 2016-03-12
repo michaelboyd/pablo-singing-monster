@@ -28,8 +28,8 @@ import com.vaadin.ui.VerticalLayout;
 @Theme("valo")
 public class MonsterUI extends UI {
 	
-	private final Table monsterList = new Table("Monsters");
-	private final Table islandList = new Table("Islands");
+	private final Table monsterTable = new Table("Monsters");
+	private final Table islandTable = new Table("Islands");
 	
 	private final TextField filter = new TextField();
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
@@ -74,10 +74,10 @@ public class MonsterUI extends UI {
         filter.setWidth("100%");
         actions.setExpandRatio(filter, 1);
 
-        VerticalLayout left = new VerticalLayout(actions, monsterList);
+        VerticalLayout left = new VerticalLayout(actions, monsterTable);
         left.setSizeFull();
-        monsterList.setSizeFull();
-        left.setExpandRatio(monsterList, 1);
+        monsterTable.setSizeFull();
+        left.setExpandRatio(monsterTable, 1);
 
         HorizontalLayout mainLayout = new HorizontalLayout(left, monsterForm);
         mainLayout.setSizeFull();
@@ -87,10 +87,10 @@ public class MonsterUI extends UI {
 		islandActions.setWidth("100%");
 		islandActions.setComponentAlignment(addIslandButton, Alignment.MIDDLE_RIGHT);
 		
-        VerticalLayout islands = new VerticalLayout(islandActions, islandList);
+        VerticalLayout islands = new VerticalLayout(islandActions, islandTable);
         islands.setSizeFull();
-        islandList.setSizeFull();
-        islands.setExpandRatio(islandList, 1);
+        islandTable.setSizeFull();
+        islands.setExpandRatio(islandTable, 1);
 
         HorizontalLayout islandLayout = new HorizontalLayout(islands, islandForm);
         islandLayout.setSizeFull();
@@ -109,32 +109,32 @@ public class MonsterUI extends UI {
 	
 	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
-			monsterList.setContainerDataSource(
+			monsterTable.setContainerDataSource(
 					new BeanItemContainer<Monster>(Monster.class, repo.findAll(new Sort(Sort.Direction.ASC, "name"))));
 		}
 		else {
-			monsterList.setContainerDataSource(new BeanItemContainer<Monster>(Monster.class,
+			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(Monster.class,
 					repo.findByNameStartsWithIgnoreCase(text)));
 		}
-        monsterList.setVisibleColumns(new Object[] {"name", "description", "island"});
-        monsterList.setColumnHeaders(new String[] { "Name", "Description", "Island" });
-        monsterList.setPageLength(15);
-        monsterList.setSelectable(true);
-        monsterList.setImmediate(true);        
-        monsterList.setNullSelectionAllowed(true);
-        monsterList.addValueChangeListener(e -> monsterForm.edit((Monster) monsterList.getValue()));		
+        monsterTable.setVisibleColumns(new Object[] {"name", "description", "island"});
+        monsterTable.setColumnHeaders(new String[] { "Name", "Description", "Island" });
+        monsterTable.setPageLength(15);
+        monsterTable.setSelectable(true);
+        monsterTable.setImmediate(true);        
+        monsterTable.setNullSelectionAllowed(true);
+        monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
 	}
 	
 	protected void listIslands() {
-		islandList.setContainerDataSource(new BeanItemContainer<Island>(
+		islandTable.setContainerDataSource(new BeanItemContainer<Island>(
 				Island.class, islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))));
-      islandList.setVisibleColumns(new Object[] {"name"});
-      islandList.setColumnHeaders(new String[] { "Name" });
-      islandList.setPageLength(10);
-      islandList.setSelectable(true);
-      islandList.setImmediate(true);        
-      islandList.setNullSelectionAllowed(true);
-      islandList.addValueChangeListener(e -> islandForm.edit((Island) islandList.getValue()));		
+      islandTable.setVisibleColumns(new Object[] {"name"});
+      islandTable.setColumnHeaders(new String[] { "Name" });
+      islandTable.setPageLength(10);
+      islandTable.setSelectable(true);
+      islandTable.setImmediate(true);        
+      islandTable.setNullSelectionAllowed(true);
+      islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
 	}
 
 	TextField getFilter() {
