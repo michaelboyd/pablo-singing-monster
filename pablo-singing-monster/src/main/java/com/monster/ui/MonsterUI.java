@@ -19,6 +19,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.ColumnHeaderMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -62,23 +63,23 @@ public class MonsterUI extends UI {
 		filter.setInputPrompt("Filter by Name");
 		filter.addTextChangeListener(e -> listMonsters(e.getText()));
 
-        monsterList.setContainerDataSource(new BeanItemContainer<>(Monster.class));
-        monsterList.setPageLength(10);
+		listMonsters(null);
+        monsterList.setVisibleColumns(new Object[] {"name", "description", "island"});
+        monsterList.setColumnHeaders(new String[] { "Name", "Description", "Island" });
+        monsterList.setPageLength(15);
         monsterList.setSelectable(true);
         monsterList.setImmediate(true);        
-        monsterList.setNullSelectionAllowed(false);
+        monsterList.setNullSelectionAllowed(true);
         monsterList.addValueChangeListener(e -> monsterForm.edit((Monster) monsterList.getValue()));
-        
-        islandList.setContainerDataSource(new BeanItemContainer<>(Island.class));
+
+        listIslands();
+        islandList.setVisibleColumns(new Object[] {"name"});
+        islandList.setColumnHeaders(new String[] { "Name" });
         islandList.setPageLength(10);
         islandList.setSelectable(true);
         islandList.setImmediate(true);        
-        islandList.setNullSelectionAllowed(false);
+        islandList.setNullSelectionAllowed(true);
         islandList.addValueChangeListener(e -> islandForm.edit((Island) islandList.getValue()));
-
-		listMonsters(null);
-		listIslands();
-		
 	}
 	
 	private void buildLayout() {
