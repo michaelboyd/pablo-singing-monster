@@ -9,8 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -23,6 +21,7 @@ import com.monster.domain.PictureRepository;
 import com.monster.service.PictureService;
 import com.monster.utils.ImageSize;
 import com.monster.utils.ImageSource;
+import com.monster.utils.PictureUploader;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
@@ -58,8 +57,9 @@ public class IslandForm extends FormLayout implements FormConstants {
 	private TextField name = new TextField("Name");
 	Table monsterList = new Table("Monsters");
 	private final Embedded image = new Embedded("Uploaded Picture");
-	private ImageUploader receiver = new ImageUploader();	
-	private Upload upload = new Upload("Upload Picture", receiver);  
+	
+	private PictureUploader receiver;	
+	private Upload upload;  
 	
 	private Island island;
 	
@@ -84,21 +84,24 @@ public class IslandForm extends FormLayout implements FormConstants {
 	}
     
     private void configureComponents() {
+    	setVisible(false);
+    	
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER); 
-        
+       
+        image.setVisible(false);
         image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
 		    public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
 		        UI.getCurrent().addWindow(new PictureSubwindow(island, pictureRepo));
 		    }
 		});
-        image.setVisible(false);
-
+        
+        upload = new Upload("Upload Picture", null);
+        receiver = new PictureUploader(island, image, upload, deletePicture, pictureRepo, pictureService);
+        upload.setReceiver(receiver);
         upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);        
         
-    	setVisible(false);
-
     	name.setWidth("300px");
         name.setRequired(true);
         name.setRequiredError("Name must not be empty");
@@ -124,6 +127,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 	
     void edit(Island island) {
         this.island = island;
+        this.receiver.setEntity(island);
         if(island != null) {
             formFieldBindings = BeanFieldGroup.bindFieldsBuffered(island, this);
             //name.focus();
@@ -221,41 +225,6 @@ public class IslandForm extends FormLayout implements FormConstants {
         return (MonsterUI) super.getUI();
     } 
     
-	class ImageUploader implements Receiver, SucceededListener {
-
-		private static final long serialVersionUID = 8684994998768778621L;
-		public File file;
-
-		public OutputStream receiveUpload(String filename, String mimeType) {
-			FileOutputStream fos = null;
-			try {
-				file = new File(UPLOAD_FOLDER_IMAGE + filename);
-				fos = new FileOutputStream(file);
-			} catch (final java.io.FileNotFoundException e) {
-				new Notification("Could not open file", e.getMessage(),
-						Notification.Type.ERROR_MESSAGE)
-						.show(Page.getCurrent());
-				return null;
-			}
-			return fos;
-		}
-
-		public void uploadSucceeded(SucceededEvent event) {
-			Path path = Paths.get(file.getPath());
-			Picture picture = null;
-			try {
-				byte[] fileData = Files.readAllBytes(path);
-	            if(fileData != null && fileData.length > 0) {
-	            	pictureService.savePicture(island, fileData, event.getFilename());
-	            }				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.big);
-			showOrHidePicture(picture);
-		}
-	}  
-	
     private void showOrHidePicture(Picture picture) {
 		if (picture != null) {
 			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
@@ -270,5 +239,4 @@ public class IslandForm extends FormLayout implements FormConstants {
 			deletePicture.setVisible(false);
 		}		
     }	
-
 }

@@ -2,16 +2,11 @@ package com.monster.ui;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.monster.domain.IslandRepository;
@@ -22,6 +17,7 @@ import com.monster.domain.PictureRepository;
 import com.monster.service.PictureService;
 import com.monster.utils.ImageSize;
 import com.monster.utils.ImageSource;
+import com.monster.utils.PictureUploader;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -68,8 +64,8 @@ public class MonsterForm extends FormLayout implements FormConstants{
     
 	private Upload upload;
 	private Upload audioUpload;
-	private ImageUploader receiver = new ImageUploader();	
-	private AudioUploader audioReceiver = new AudioUploader();
+	private PictureUploader receiver;	
+	private AudioUploader audioReceiver;
 	
 	private MonsterRepository monsterRepo;
 	private IslandRepository islandRepo;
@@ -91,28 +87,29 @@ public class MonsterForm extends FormLayout implements FormConstants{
 
     @SuppressWarnings("serial")
 	private void configureComponents() {
-        
-    	save.setStyleName(ValoTheme.BUTTON_PRIMARY);
+		setVisible(false);    	
+
+		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         
         image.setVisible(false);
-        
 		image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
 			public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
 				UI.getCurrent().addWindow(new PictureSubwindow(monster, pictureRepo));
 			}
 		});
         
-		upload = new Upload("Upload Picture", receiver);
+		upload = new Upload("Upload Picture", null);
+		receiver = new PictureUploader(monster, image, upload, deletePicture, pictureRepo, pictureService);
+		upload.setReceiver(receiver);
 		upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);    
 		
+		audioReceiver = new AudioUploader();
 		audioUpload = new Upload("Upload Audio", audioReceiver);
 		audioUpload.setButtonCaption("Start Upload");
 		audioUpload.addSucceededListener(audioReceiver);
 		
-		
-		setVisible(false);
     	name.setWidth("300px");
         name.setRequired(true);
         name.setRequiredError("Name must not be empty");
@@ -196,6 +193,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 
     void edit(Monster monster) {
         this.monster = monster;
+        this.receiver.setEntity(monster);
         delete.setVisible(true);
         setVisible(monster != null);
         if(monster != null) {
@@ -234,42 +232,6 @@ public class MonsterForm extends FormLayout implements FormConstants{
         return (MonsterUI) super.getUI();
     }
 
-	class ImageUploader implements Receiver, SucceededListener {
-
-		private static final long serialVersionUID = 8684994998768778621L;
-		public File file;
-
-		public OutputStream receiveUpload(String filename, String mimeType) {
-			FileOutputStream fos = null;
-			try {
-				file = new File(UPLOAD_FOLDER_IMAGE + filename);
-				fos = new FileOutputStream(file);
-			} catch (final java.io.FileNotFoundException e) {
-				new Notification("Could not open file", e.getMessage(),
-						Notification.Type.ERROR_MESSAGE)
-						.show(Page.getCurrent());
-				return null;
-			}
-			return fos;
-		}
-
-		public void uploadSucceeded(SucceededEvent event) {
-			Path path = Paths.get(file.getPath());
-			Picture picture = null;
-			try {
-				byte[] fileData = Files.readAllBytes(path);
-	            if(fileData != null && fileData.length > 0) {
-	            	pictureService.savePicture(monster, fileData, event.getFilename());
-	            }				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
-			showOrHidePicture(picture);
-		}
-	}	
-	
 	class AudioUploader implements Receiver, SucceededListener {
 
 		private static final long serialVersionUID = 8684994998768778621L;
