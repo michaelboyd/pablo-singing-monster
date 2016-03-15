@@ -14,12 +14,10 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.ColumnHeaderMode;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -63,6 +61,9 @@ public class MonsterUI extends UI {
 		monsterFilter.addTextChangeListener(e -> listMonsters(e.getText()));
 		islandFilter.setInputPrompt("Filter by Island Name");
 		islandFilter.addTextChangeListener(e -> listIslands(e.getText()));		
+        monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
+        islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
+
 		listMonsters(null);
         listIslands(null);
 	}
@@ -110,38 +111,39 @@ public class MonsterUI extends UI {
 	
 	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
-			monsterTable.setContainerDataSource(
-					new BeanItemContainer<Monster>(Monster.class, repo.findAll(new Sort(Sort.Direction.ASC, "name"))));
+			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
+					Monster.class, repo.findAll(new Sort(Sort.Direction.ASC,
+							"name"))));
+		} else {
+			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
+					Monster.class, repo.findByNameStartsWithIgnoreCase(text)));
 		}
-		else {
-			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(Monster.class,
-					repo.findByNameStartsWithIgnoreCase(text)));
-		}
-        monsterTable.setVisibleColumns(new Object[] {"name", "description", "island"});
-        monsterTable.setColumnHeaders(new String[] { "Name", "Description", "Island" });
-        monsterTable.setPageLength(15);
-        monsterTable.setSelectable(true);
-        monsterTable.setImmediate(true);        
-        monsterTable.setNullSelectionAllowed(true);
-        monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
+		monsterTable.setVisibleColumns(new Object[] { "name", "description",
+				"island" });
+		monsterTable.setColumnHeaders(new String[] { "Name", "Description",
+				"Island" });
+		monsterTable.setPageLength(15);
+		monsterTable.setSelectable(true);
+		monsterTable.setImmediate(true);
+		monsterTable.setNullSelectionAllowed(true);
 	}
-	
+
 	protected void listIslands(String text) {
-		if(StringUtils.isEmpty(text)) {
+		if (StringUtils.isEmpty(text)) {
 			islandTable.setContainerDataSource(new BeanItemContainer<Island>(
-					Island.class, islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"))));
+					Island.class, islandRepo.findAll(new Sort(
+							Sort.Direction.ASC, "name"))));
+		} else {
+			islandTable.setContainerDataSource(new BeanItemContainer<Island>(
+					Island.class, islandRepo
+							.findByNameStartsWithIgnoreCase(text)));
 		}
-		else {
-			islandTable.setContainerDataSource(new BeanItemContainer<Island>(Island.class,
-					islandRepo.findByNameStartsWithIgnoreCase(text)));			
-		}
-      islandTable.setVisibleColumns(new Object[] {"name"});
-      islandTable.setColumnHeaders(new String[] { "Name" });
-      islandTable.setPageLength(10);
-      islandTable.setSelectable(true);
-      islandTable.setImmediate(true);        
-      islandTable.setNullSelectionAllowed(true);
-      islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
+		islandTable.setVisibleColumns(new Object[] { "name" });
+		islandTable.setColumnHeaders(new String[] { "Name" });
+		islandTable.setPageLength(10);
+		islandTable.setSelectable(true);
+		islandTable.setImmediate(true);
+		islandTable.setNullSelectionAllowed(true);
 	}
 
 	protected TextField getMonsterFilter() {

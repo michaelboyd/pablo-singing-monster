@@ -1,10 +1,8 @@
 package com.monster.ui;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,9 +20,11 @@ import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.service.PictureService;
 import com.monster.utils.ImageSize;
+import com.monster.utils.ImageSource;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
@@ -32,7 +32,6 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
@@ -50,6 +49,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+@SuppressWarnings("serial")
 @SpringComponent
 @UIScope
 public class MonsterForm extends FormLayout implements FormConstants{
@@ -70,40 +70,39 @@ public class MonsterForm extends FormLayout implements FormConstants{
     private Monster monster;
     byte[] fileData;
     
-	@Autowired
-	private MonsterRepository monsterRepo;    
-	
-	@Autowired
+	private MonsterRepository monsterRepo;
+	private IslandRepository islandRepo;
 	public PictureRepository pictureRepo;
-	
-	@Autowired
 	public PictureService pictureService;
-	
     private BeanFieldGroup <Monster> formFieldBindings;
     
-    @Autowired
-    public MonsterForm(IslandRepository islandRepo) {
-        configureComponents();
-        initIslandList(islandRepo);
-        buildLayout();        
-    }
+	@Autowired
+	public MonsterForm(IslandRepository islandRepo,
+			MonsterRepository monsterRepo, PictureRepository pictureRepo,
+			PictureService pictureService) {
+		this.islandRepo = islandRepo;
+		this.monsterRepo = monsterRepo;
+		this.pictureRepo = pictureRepo;
+		this.pictureService = pictureService;
+		configureComponents();
+		buildLayout();
+	}
 
-    private void configureComponents() {
-        save.setStyleName(ValoTheme.BUTTON_PRIMARY);
+    @SuppressWarnings("serial")
+	private void configureComponents() {
+        
+    	save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         
-        image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
-		    public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-		        MySub sub = new MySub();
-		        // Add it to the root component
-		        UI.getCurrent().addWindow(sub);
-		    }
-		});
         image.setVisible(false);
-		
-        upload.setButtonCaption("Start Upload");
+		image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
+			public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
+				UI.getCurrent().addWindow(new MySub());
+			}
+		});
+        
+		upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);    
-		
 		audioUpload.setButtonCaption("Start Upload");
 		audioUpload.addSucceededListener(audioReceiver);
 		
@@ -115,6 +114,8 @@ public class MonsterForm extends FormLayout implements FormConstants{
         name.setValidationVisible(true);
         name.addValidator(new StringLengthValidator("Must not be empty", 1, 100, false));
         description.setWidth("300px");
+        
+        initIslandList();
     }
     
     private void buildLayout() {
@@ -127,7 +128,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         addComponents(name, description, pictureAction, upload, image, audioUpload, actions);
     }
     
-    private void initIslandList(IslandRepository islandRepo) {
+    private void initIslandList() {
 		island.addItems(islandRepo
 				.findAll(new Sort(Sort.Direction.ASC, "name")));
         island.setNullSelectionAllowed(false);
@@ -159,7 +160,8 @@ public class MonsterForm extends FormLayout implements FormConstants{
         refreshMonsterList();
     }
     
-    public void delete(Button.ClickEvent event) {
+    @SuppressWarnings("serial")
+	public void delete(Button.ClickEvent event) {
 		ConfirmDialog.show(getUI(), "Delete the Monster?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
@@ -171,6 +173,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 		});    	
     }
     
+	@SuppressWarnings("serial")
 	public void deletePicture(Button.ClickEvent event) {
 		ConfirmDialog.show(getUI(), "Delete the Monster's Picture?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
@@ -187,16 +190,12 @@ public class MonsterForm extends FormLayout implements FormConstants{
 
     void edit(Monster monster) {
         this.monster = monster;
-        if(monster != null) {
-            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
-            //name.focus();
-        }
         delete.setVisible(true);
         setVisible(monster != null);
-        
         if(monster != null) {
-        	Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
-        	showOrHidePicture(picture);
+            formFieldBindings = BeanFieldGroup.bindFieldsBuffered(monster, this);
+            Picture bigPicture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
+            showOrHidePicture(bigPicture);
         	island.setValue(monster.getIsland());
         }
     }
@@ -303,6 +302,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 	
 	// Define a sub-window by inheritance
 	class MySub extends Window {
+		
 	    public MySub() {
 	        super(monster.getName()); // Set window caption
 	        center();
@@ -311,7 +311,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 	        
 	        Embedded image = new Embedded();	  
 	        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.fullSize);
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
 	        
@@ -322,35 +322,21 @@ public class MonsterForm extends FormLayout implements FormConstants{
 
 	        // Trivial logic for closing the sub-window
 	        Button ok = new Button("Close");
-	        ok.addClickListener(new ClickListener() {
+	        ok.addClickListener(new com.vaadin.ui.Button.ClickListener() {
 	            public void buttonClick(ClickEvent event) {
 	                close(); // Close the sub-window
 	            }
 	        });
 	        content.addComponent(ok);
 	    }
+	    
 	}	
 	
-	public class MyImageSource implements StreamResource.StreamSource {
 
-		private byte file[] = null;
-
-		public MyImageSource(byte file[]) {
-			this.file = file;
-		}
-
-		public InputStream getStream() {
-			try {
-				return new ByteArrayInputStream(file);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-	}
 	
     private void showOrHidePicture(Picture picture) {
 		if (picture != null) {
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));
 			upload.setVisible(false);

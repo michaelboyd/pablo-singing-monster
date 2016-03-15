@@ -14,8 +14,10 @@ import com.vaadin.ui.Window;
 public class PictureSubwindow extends Window{
 
 	private String caption;
+	private Picture picture;
 	
 	public PictureSubwindow(Picture picture) {
+		this.picture = picture;
 		
 		if(picture.getMonster() != null) {
 			caption = picture.getMonster().getName();
@@ -47,4 +49,37 @@ public class PictureSubwindow extends Window{
         });
         content.addComponent(ok);
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((caption == null) ? 0 : caption.hashCode());
+		result = prime * result + ((picture == null) ? 0 : picture.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PictureSubwindow other = (PictureSubwindow) obj;
+		if (caption == null) {
+			if (other.caption != null)
+				return false;
+		} else if (!caption.equals(other.caption))
+			return false;
+		if (picture == null) {
+			if (other.picture != null)
+				return false;
+		} else if (!picture.equals(other.picture))
+			return false;
+		return true;
+	}
+	
+	
 }
