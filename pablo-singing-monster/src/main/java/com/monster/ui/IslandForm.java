@@ -1,10 +1,8 @@
 package com.monster.ui;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +20,7 @@ import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
 import com.monster.service.PictureService;
 import com.monster.utils.ImageSize;
+import com.monster.utils.ImageSource;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
@@ -37,7 +36,6 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
@@ -69,24 +67,23 @@ public class IslandForm extends FormLayout implements FormConstants {
 	
     private BeanFieldGroup <Island> formFieldBindings;	
     
-    @Autowired
     private IslandRepository islandRepo;
-    
-    @Autowired
     private PictureService pictureService;
-    
-    @Autowired
     private PictureRepository pictureRepo;
-    
     private MonsterRepository monsterRepo;
     
-    @Autowired
-    public IslandForm(MonsterRepository monsterRepo) {
-    	this.monsterRepo = monsterRepo;
-    	configureComponents();
-    	buildLayout();
-    	
-    }
+	@Autowired
+	public IslandForm(MonsterRepository monsterRepo,
+			PictureRepository pictureRepo, PictureService pictureService,
+			IslandRepository islandRepo) {
+		this.monsterRepo = monsterRepo;
+		this.islandRepo = islandRepo;
+		this.pictureRepo = pictureRepo;
+		this.pictureService = pictureService;
+		configureComponents();
+		buildLayout();
+
+	}
     
     private void configureComponents() {
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -262,23 +259,6 @@ public class IslandForm extends FormLayout implements FormConstants {
 		}
 	}  
 	
-	public class MyImageSource implements StreamResource.StreamSource {
-
-		private byte file[] = null;
-
-		public MyImageSource(byte file[]) {
-			this.file = file;
-		}
-
-		public InputStream getStream() {
-			try {
-				return new ByteArrayInputStream(file);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-	}
-	
 	// Define a sub-window by inheritance
 	class MySub extends Window {
 	    public MySub() {
@@ -289,7 +269,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 	        
 	        Embedded image = new Embedded();	  
 	        Picture picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
 	        
@@ -311,7 +291,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 	
     private void showOrHidePicture(Picture picture) {
 		if (picture != null) {
-			StreamResource.StreamSource imagesource = new MyImageSource(picture.getFile());
+			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
 			image.setVisible(true);
 			image.setSource(new StreamResource(imagesource, picture.getFileName()));
 			upload.setVisible(false);
