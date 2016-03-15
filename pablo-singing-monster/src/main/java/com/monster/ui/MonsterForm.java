@@ -54,18 +54,23 @@ import com.vaadin.ui.themes.ValoTheme;
 @UIScope
 public class MonsterForm extends FormLayout implements FormConstants{
 
+	//buttons
     private Button save = new Button("Save", this::save);
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);
     private Button deletePicture = new Button("Delete Picture", this::deletePicture);
+    
+    //input fields
     private TextField name = new TextField("Name");
     private TextArea description = new TextArea("Description");
+    private ComboBox island = new ComboBox("Islands"); //must be called island to bind form elements to the persistable object
+    
+	private Upload upload;
+	private Upload audioUpload;
 	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
-	private Upload upload = new Upload("Upload Picture", receiver);  
-	private ComboBox island = new ComboBox("Islands"); //must be called island to bind form elements to the persistable object
 	private AudioUploader audioReceiver = new AudioUploader();
-	private Upload audioUpload = new Upload("Upload Audio", audioReceiver);
+	
 	
     private Monster monster;
     byte[] fileData;
@@ -101,10 +106,14 @@ public class MonsterForm extends FormLayout implements FormConstants{
 			}
 		});
         
+		upload = new Upload("Upload Picture", receiver);
 		upload.setButtonCaption("Start Upload");
 		upload.addSucceededListener(receiver);    
+		
+		audioUpload = new Upload("Upload Audio", audioReceiver);
 		audioUpload.setButtonCaption("Start Upload");
 		audioUpload.addSucceededListener(audioReceiver);
+		
 		
 		setVisible(false);
     	name.setWidth("300px");
