@@ -25,10 +25,12 @@ public class PictureSubwindow extends Window{
 		if(entity instanceof Monster) {
 			Monster monster = (Monster) entity;
 			picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.fullSize);
+			caption = monster.getName();
 		}
 		else if(entity instanceof Island) {
 			Island island = (Island) entity;
 			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
+			caption = island.getName();
 		}
 		
         setCaption(caption);
