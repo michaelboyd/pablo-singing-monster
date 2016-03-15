@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -31,8 +33,6 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -45,8 +45,6 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SpringComponent
@@ -91,8 +89,7 @@ public class IslandForm extends FormLayout implements FormConstants {
         
         image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
 		    public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-		        MySub sub = new MySub();
-		        UI.getCurrent().addWindow(sub);
+		        UI.getCurrent().addWindow(new PictureSubwindow(island, pictureRepo));
 		    }
 		});
         image.setVisible(false);
@@ -176,7 +173,7 @@ public class IslandForm extends FormLayout implements FormConstants {
 		ConfirmDialog.show(getUI(), "Do you really want to Delete the Picture for Island: " + island.getName() + "?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
-			    	List <Picture> pictures = pictureRepo.findByIsland(island);
+					List <Picture> pictures = pictureRepo.findByIsland(island);
 			    	for(Picture picture : pictures) {
 			    		pictureRepo.delete(picture);
 			    	}
@@ -258,36 +255,6 @@ public class IslandForm extends FormLayout implements FormConstants {
 			showOrHidePicture(picture);
 		}
 	}  
-	
-	// Define a sub-window by inheritance
-	class MySub extends Window {
-	    public MySub() {
-	        super(island.getName()); // Set window caption
-	        center();
-	        setModal(true);
-	        setClosable(true);
-	        
-	        Embedded image = new Embedded();	  
-	        Picture picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
-			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
-			image.setVisible(true);
-			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
-	        
-	        VerticalLayout content = new VerticalLayout();
-			content.addComponent(image);
-			content.setMargin(true);			
-	        setContent(content);			
-
-	        // Trivial logic for closing the sub-window
-	        Button ok = new Button("Close");
-	        ok.addClickListener(new ClickListener() {
-	            public void buttonClick(ClickEvent event) {
-	                close(); // Close the sub-window
-	            }
-	        });
-	        content.addComponent(ok);
-	    }
-	}	
 	
     private void showOrHidePicture(Picture picture) {
 		if (picture != null) {

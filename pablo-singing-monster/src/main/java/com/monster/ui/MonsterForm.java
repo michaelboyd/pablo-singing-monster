@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import com.monster.domain.IslandRepository;
@@ -24,14 +25,12 @@ import com.monster.utils.ImageSource;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.validator.StringLengthValidator;
-import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.FormLayout;
@@ -45,8 +44,6 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Upload.SucceededListener;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
@@ -54,27 +51,26 @@ import com.vaadin.ui.themes.ValoTheme;
 @UIScope
 public class MonsterForm extends FormLayout implements FormConstants{
 
+    private Monster monster;
+    byte[] fileData;
+	
 	//buttons
     private Button save = new Button("Save", this::save);
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);
     private Button deletePicture = new Button("Delete Picture", this::deletePicture);
     
-    //input fields
+    //input and display fields
     private TextField name = new TextField("Name");
     private TextArea description = new TextArea("Description");
     private ComboBox island = new ComboBox("Islands"); //must be called island to bind form elements to the persistable object
+    private final Embedded image = new Embedded("Uploaded Picture");
     
 	private Upload upload;
 	private Upload audioUpload;
-	private final Embedded image = new Embedded("Uploaded Picture");
 	private ImageUploader receiver = new ImageUploader();	
 	private AudioUploader audioReceiver = new AudioUploader();
 	
-	
-    private Monster monster;
-    byte[] fileData;
-    
 	private MonsterRepository monsterRepo;
 	private IslandRepository islandRepo;
 	public PictureRepository pictureRepo;
@@ -100,9 +96,10 @@ public class MonsterForm extends FormLayout implements FormConstants{
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         
         image.setVisible(false);
+        
 		image.addClickListener(new com.vaadin.event.MouseEvents.ClickListener() {
 			public void click(com.vaadin.event.MouseEvents.ClickEvent event) {
-				UI.getCurrent().addWindow(new MySub());
+				UI.getCurrent().addWindow(new PictureSubwindow(monster, pictureRepo));
 			}
 		});
         
@@ -182,11 +179,11 @@ public class MonsterForm extends FormLayout implements FormConstants{
 		});    	
     }
     
-	@SuppressWarnings("serial")
 	public void deletePicture(Button.ClickEvent event) {
 		ConfirmDialog.show(getUI(), "Delete the Monster's Picture?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
+					
 					List<Picture> pictures = pictureRepo.findByMonster(monster);
 					for (Picture picture : pictures) {
 						pictureRepo.delete(picture);
@@ -293,55 +290,9 @@ public class MonsterForm extends FormLayout implements FormConstants{
 		}
 
 		public void uploadSucceeded(SucceededEvent event) {
-//			Path path = Paths.get(file.getPath());
-//			Picture picture = null;
-//			try {
-//				byte[] fileData = Files.readAllBytes(path);
-//	            if(fileData != null && fileData.length > 0) {
-//	            	pictureService.savePicture(monster, fileData, event.getFilename());
-//	            }				
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			
-//			picture = pictureRepo.findByMonsterAndImageSizeAndMonsterNotNull(monster, ImageSize.big);
-//			showOrHidePicture(picture);
+			//TODO: implement
 		}
 	}
-	
-	// Define a sub-window by inheritance
-	class MySub extends Window {
-		
-	    public MySub() {
-	        super(monster.getName()); // Set window caption
-	        center();
-	        setModal(true);
-	        setClosable(true);
-	        
-	        Embedded image = new Embedded();	  
-	        Picture picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.fullSize);
-			StreamResource.StreamSource imagesource = new ImageSource(picture.getFile());
-			image.setVisible(true);
-			image.setSource(new StreamResource(imagesource, picture.getFileName()));	        
-	        
-	        VerticalLayout content = new VerticalLayout();
-			content.addComponent(image);
-			content.setMargin(true);			
-	        setContent(content);			
-
-	        // Trivial logic for closing the sub-window
-	        Button ok = new Button("Close");
-	        ok.addClickListener(new com.vaadin.ui.Button.ClickListener() {
-	            public void buttonClick(ClickEvent event) {
-	                close(); // Close the sub-window
-	            }
-	        });
-	        content.addComponent(ok);
-	    }
-	    
-	}	
-	
-
 	
     private void showOrHidePicture(Picture picture) {
 		if (picture != null) {
