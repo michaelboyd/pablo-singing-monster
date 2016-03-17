@@ -67,10 +67,13 @@ public class Monster {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Monster [id=").append(id).append(", name=").append(name).append(", island=").append(island)
-				.append("]");
+		//builder.append("Monster [name=");
+		builder.append(name);
+		//builder.append("]");
 		return builder.toString();
 	}
+
+
 	
 	
 }
