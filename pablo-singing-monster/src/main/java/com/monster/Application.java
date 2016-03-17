@@ -61,7 +61,7 @@ public class Application extends SpringBootServletInitializer{
 					islandRepo.save(islandEntity);
 					//save the picture
 					try {
-						Path path = Paths.get("test-image/test.jpg");
+						Path path = Paths.get("test-files/test.jpg");
 						byte[] file = Files.readAllBytes(path);
 						pictureService.savePicture(islandEntity, file, "test.jpg");
 					} catch (IOException e) {
@@ -74,7 +74,8 @@ public class Application extends SpringBootServletInitializer{
 			Island island1 = islandRepo.findByNameOrderByNameAsc("Monstro-city");
 			
 			//monster names
-			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper", "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune", "Peacemaker"};
+			String monsterNames[] = {"Skele-tone", "Reggae Turtle", "Rock Stomp", "Blubber Slapper"};
+					//, "Vampfire", "Toung-Flicker", "Rain-Bulb", "Run Drummer", "Blunger", "I-Scream", "Balloon-Tune", "Peacemaker"};
 			Monster m = null;
 			
 			for(int i=0; i<monsterNames.length; i++) {
@@ -83,7 +84,7 @@ public class Application extends SpringBootServletInitializer{
 					monsterRepo.save(m);
 					//save the picture
 					try {
-						Path path = Paths.get("test-image/test.jpg");
+						Path path = Paths.get("test-files/test.jpg");
 						byte[] file = Files.readAllBytes(path);
 						pictureService.savePicture(m, file, "test.jpg");
 					} catch (IOException e) {
