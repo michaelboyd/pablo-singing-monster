@@ -14,7 +14,9 @@ import com.vaadin.ui.VerticalLayout;
 
 public class AudioTest extends VerticalLayout implements FormConstants{
 	
-	//this is from http://massapi.com/source/github/49/25/49255846/uitest/src/com/vaadin/tests/components/media/AudioTest.java.html#41
+	//http://massapi.com/source/github/49/25/49255846/uitest/src/com/vaadin/tests/components/media/AudioTest.java.html#41
+	
+	//http://massapi.com/source/github/49/25/49255846/uitest/src/com/vaadin/tests/components/media/Media.java.html#69
 
 	public AudioTest() {
 		setup();
@@ -23,7 +25,9 @@ public class AudioTest extends VerticalLayout implements FormConstants{
 	protected void setup() {
 
 		// Public domain sounds from pdsounds.org 27.2.2013
-		final Resource[] s1 = { new FileResource(new File(UPLOAD_FOLDER_AUDIO + "test.m4a")) };
+		//final Resource[] s1 = { new FileResource(new File("test-files/Driving.mp3")) };
+		//final Resource[] s1 = { new ClassResource(getClass(), new File("test-files/Driving.mp3")) };
+		final Resource[] s1 = { new FileResource(new File("test-files/Driving.mp3")) };
 		//final Resource[] s2 = {	new ClassResource(getClass(), "toyphone_dialling.mp3"),	new ClassResource(getClass(), "toyphone_dialling.ogg") };
 
 		final Audio audio = new Audio();
