@@ -1,6 +1,10 @@
 package com.monster.ui;
 
+import com.monster.domain.Island;
+import com.monster.domain.Monster;
 import com.monster.domain.Picture;
+import com.monster.domain.PictureRepository;
+import com.monster.utils.ImageSize;
 import com.monster.utils.ImageSource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Button;
@@ -16,14 +20,17 @@ public class PictureSubwindow extends Window{
 	private String caption;
 	private Picture picture;
 	
-	public PictureSubwindow(Picture picture) {
-		this.picture = picture;
-		
-		if(picture.getMonster() != null) {
-			caption = picture.getMonster().getName();
+	public PictureSubwindow(Object entity, PictureRepository pictureRepo) {
+
+		if(entity instanceof Monster) {
+			Monster monster = (Monster) entity;
+			picture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.fullSize);
+			caption = monster.getName();
 		}
-		else if(picture.getIsland() != null) {
-			caption = picture.getIsland().getName();
+		else if(entity instanceof Island) {
+			Island island = (Island) entity;
+			picture = pictureRepo.findByIslandAndImageSize(island, ImageSize.fullSize);
+			caption = island.getName();
 		}
 		
         setCaption(caption);
@@ -47,39 +54,7 @@ public class PictureSubwindow extends Window{
                 close();
             }
         });
-        content.addComponent(ok);
-    }
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((caption == null) ? 0 : caption.hashCode());
-		result = prime * result + ((picture == null) ? 0 : picture.hashCode());
-		return result;
+        content.addComponent(ok);		
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PictureSubwindow other = (PictureSubwindow) obj;
-		if (caption == null) {
-			if (other.caption != null)
-				return false;
-		} else if (!caption.equals(other.caption))
-			return false;
-		if (picture == null) {
-			if (other.picture != null)
-				return false;
-		} else if (!picture.equals(other.picture))
-			return false;
-		return true;
-	}
-	
 	
 }
