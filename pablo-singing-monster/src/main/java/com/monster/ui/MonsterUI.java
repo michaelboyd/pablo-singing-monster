@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
-import com.monster.audio.utils.SongPlayer;
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
@@ -98,13 +97,9 @@ public class MonsterUI extends UI {
         islandLayout.setSizeFull();
         islandLayout.setExpandRatio(islands, 1);
         
-//        SongPlayer audioTest = new SongPlayer();
-//        audioTest.setVisible(true);
-        
         TabSheet tabsheet = new TabSheet();        
         tabsheet.addTab(islandLayout).setCaption("Edit Islands");
         tabsheet.addTab(mainLayout).setCaption("Edit Monsters");
-//        tabsheet.addTab(audioTest).setCaption("Audio Test");
         setContent(tabsheet);
 		
 	}
