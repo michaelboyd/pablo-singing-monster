@@ -59,6 +59,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
     private Button cancel = new Button("Cancel", this::cancel);
     private Button delete = new Button("Delete", this::delete);
     private Button deletePicture = new Button("Delete Picture", this::deletePicture);
+    private Button deleteSong = new Button("Delete Song", this::deleteSong);
     
     //input and display fields
     private TextField name = new TextField("Name");
@@ -135,7 +136,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         HorizontalLayout pictureAction = new HorizontalLayout(island, deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-        addComponents(name, description, pictureAction, upload, image, audioUpload, songPlayer, actions);
+        addComponents(name, description, pictureAction, upload, image, audioUpload, songPlayer, deleteSong, actions);
     }
     
     private void initIslandList() {
@@ -184,7 +185,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
     }
     
 	public void deletePicture(Button.ClickEvent event) {
-		ConfirmDialog.show(getUI(), "Delete the Monster's Picture?", new ConfirmDialog.Listener() {
+		ConfirmDialog.show(getUI(), "Delete the Picture for " + monster.getName() + "?", new ConfirmDialog.Listener() {
 			public void onClose(ConfirmDialog dialog) {
 				if (dialog.isConfirmed()) {
 					
@@ -196,6 +197,18 @@ public class MonsterForm extends FormLayout implements FormConstants{
 				}
 			}
 		});
+	}
+	
+	public void deleteSong(Button.ClickEvent event) {
+		ConfirmDialog.show(getUI(), "Delete the Song for " + monster.getName() + "?", new ConfirmDialog.Listener() {
+			public void onClose(ConfirmDialog dialog) {
+				if (dialog.isConfirmed()) {
+					Song song = songRepo.findByMonster(monster);
+					songRepo.delete(song);
+					showOrHideSongPlayer(null);
+				}
+			}
+		});		
 	}
 
     void edit(Monster monster) {
@@ -291,11 +304,13 @@ public class MonsterForm extends FormLayout implements FormConstants{
     		audioUpload.setVisible(false);
     		songPlayer.setFileName(song.getFileName());
     		songPlayer.setVisible(true);
+    		deleteSong.setVisible(true);
     	}
     	else 
     	{
     		audioUpload.setVisible(true);
     		songPlayer.setVisible(false);
+    		deleteSong.setVisible(false);
     	}
     }
 }
