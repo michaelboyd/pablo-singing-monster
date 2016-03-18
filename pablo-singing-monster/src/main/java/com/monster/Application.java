@@ -1,6 +1,7 @@
 package com.monster;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,9 +21,10 @@ import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.service.PictureService;
+import com.monster.ui.FormConstants;
 
 @SpringBootApplication
-public class Application extends SpringBootServletInitializer{
+public class Application extends SpringBootServletInitializer implements FormConstants {
 	
 	@Autowired
 	private MonsterRepository monsterRepo;
@@ -47,7 +49,7 @@ public class Application extends SpringBootServletInitializer{
 	@Bean
 	public CommandLineRunner loadSampleData() {
 		return (args) -> {
-			
+
 			log.info("loading sample data");
 			
 			//islands
@@ -61,7 +63,7 @@ public class Application extends SpringBootServletInitializer{
 					islandRepo.save(islandEntity);
 					//save the picture
 					try {
-						Path path = Paths.get("test-files/test.jpg");
+						Path path = Paths.get(UPLOAD_FOLDER_IMAGE + "test.jpg");
 						byte[] file = Files.readAllBytes(path);
 						pictureService.savePicture(islandEntity, file, "test.jpg");
 					} catch (IOException e) {
@@ -84,7 +86,7 @@ public class Application extends SpringBootServletInitializer{
 					monsterRepo.save(m);
 					//save the picture
 					try {
-						Path path = Paths.get("test-files/test.jpg");
+						Path path = Paths.get(UPLOAD_FOLDER_IMAGE + "test.jpg");
 						byte[] file = Files.readAllBytes(path);
 						pictureService.savePicture(m, file, "test.jpg");
 					} catch (IOException e) {
