@@ -69,7 +69,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
     
 	private Upload upload;
 	private Upload audioUpload;
-	private PictureUploader receiver;	
+	private PictureUploader pictureReceiver;	
 	private AudioUploader audioReceiver;
 	
 	private MonsterRepository monsterRepo;
@@ -107,10 +107,10 @@ public class MonsterForm extends FormLayout implements FormConstants{
 		});
         
 		upload = new Upload("Upload Picture", null);
-		receiver = new PictureUploader(monster, image, upload, deletePicture, pictureRepo, pictureService);
-		upload.setReceiver(receiver);
+		pictureReceiver = new PictureUploader(monster, image, upload, deletePicture, pictureRepo, pictureService);
+		upload.setReceiver(pictureReceiver);
 		upload.setButtonCaption("Start Upload");
-		upload.addSucceededListener(receiver);    
+		upload.addSucceededListener(pictureReceiver);    
 		
 		audioReceiver = new AudioUploader();
 		audioUpload = new Upload("Upload Audio", audioReceiver);
@@ -200,7 +200,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
 
     void edit(Monster monster) {
         this.monster = monster;
-        this.receiver.setEntity(monster);
+        this.pictureReceiver.setEntity(monster);
         delete.setVisible(true);
         setVisible(monster != null);
         if(monster != null) {
@@ -288,8 +288,8 @@ public class MonsterForm extends FormLayout implements FormConstants{
     
     private void showOrHideSongPlayer(Song song) {
     	if(song != null) {
-    		songPlayer.setFileName(song.getFileName());
     		audioUpload.setVisible(false);
+    		songPlayer.setFileName(song.getFileName());
     		songPlayer.setVisible(true);
     	}
     	else 
@@ -297,6 +297,5 @@ public class MonsterForm extends FormLayout implements FormConstants{
     		audioUpload.setVisible(true);
     		songPlayer.setVisible(false);
     	}
-    	
     }
 }
