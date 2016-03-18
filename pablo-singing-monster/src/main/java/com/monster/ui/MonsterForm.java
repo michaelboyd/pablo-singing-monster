@@ -3,17 +3,21 @@ package com.monster.ui;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.monster.audio.utils.SongPlayer;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
+import com.monster.domain.Song;
+import com.monster.domain.SongRepository;
 import com.monster.service.PictureService;
 import com.monster.utils.ImageSize;
 import com.monster.utils.ImageSource;
@@ -60,7 +64,8 @@ public class MonsterForm extends FormLayout implements FormConstants{
     private TextField name = new TextField("Name");
     private TextArea description = new TextArea("Description");
     private ComboBox island = new ComboBox("Islands"); //must be called island to bind form elements to the persistable object
-    private final Embedded image = new Embedded("Uploaded Picture");
+    private Embedded image = new Embedded("Uploaded Picture");
+    private SongPlayer songPlayer = new SongPlayer("Uploaded Song");
     
 	private Upload upload;
 	private Upload audioUpload;
@@ -71,16 +76,18 @@ public class MonsterForm extends FormLayout implements FormConstants{
 	private IslandRepository islandRepo;
 	public PictureRepository pictureRepo;
 	public PictureService pictureService;
+	public SongRepository songRepo;
     private BeanFieldGroup <Monster> formFieldBindings;
     
 	@Autowired
 	public MonsterForm(IslandRepository islandRepo,
 			MonsterRepository monsterRepo, PictureRepository pictureRepo,
-			PictureService pictureService) {
+			PictureService pictureService, SongRepository songRepo) {
 		this.islandRepo = islandRepo;
 		this.monsterRepo = monsterRepo;
 		this.pictureRepo = pictureRepo;
 		this.pictureService = pictureService;
+		this.songRepo = songRepo;
 		configureComponents();
 		buildLayout();
 	}
@@ -128,7 +135,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
         HorizontalLayout pictureAction = new HorizontalLayout(island, deletePicture);
         actions.setSpacing(true);
         pictureAction.setSpacing(true);
-        addComponents(name, description, pictureAction, upload, image, audioUpload, actions);
+        addComponents(name, description, pictureAction, upload, image, audioUpload, songPlayer, actions);
     }
     
     private void initIslandList() {
@@ -201,6 +208,8 @@ public class MonsterForm extends FormLayout implements FormConstants{
             Picture bigPicture = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.big);
             showOrHidePicture(bigPicture);
         	island.setValue(monster.getIsland());
+        	Song song = songRepo.findByMonster(monster);
+        	showOrHideSongPlayer(song);
         }
     }
     
@@ -252,7 +261,13 @@ public class MonsterForm extends FormLayout implements FormConstants{
 		}
 
 		public void uploadSucceeded(SucceededEvent event) {
-			//TODO: implement
+			Song song = new Song();
+			song.setMonster(monster);
+			song.setFileName(event.getFilename());
+			song.setCreateDate(new Date());
+			songRepo.save(song);
+			showOrHideSongPlayer(song);
+			
 		}
 	}
 	
@@ -269,5 +284,19 @@ public class MonsterForm extends FormLayout implements FormConstants{
 			upload.setVisible(true);
 			deletePicture.setVisible(false);
 		}		
-    }	
+    }
+    
+    private void showOrHideSongPlayer(Song song) {
+    	if(song != null) {
+    		songPlayer.setFileName(song.getFileName());
+    		audioUpload.setVisible(false);
+    		songPlayer.setVisible(true);
+    	}
+    	else 
+    	{
+    		audioUpload.setVisible(true);
+    		songPlayer.setVisible(false);
+    	}
+    	
+    }
 }
