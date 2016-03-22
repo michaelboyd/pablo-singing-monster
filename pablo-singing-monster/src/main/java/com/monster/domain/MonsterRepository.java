@@ -10,6 +10,7 @@ public interface MonsterRepository extends JpaRepository <Monster, Long> {
 	List <Monster> findByName(@Param("name") String name);
 	List <Monster> findByNameStartsWithIgnoreCase(@Param("name") String name);
 	List <Monster> findByIslandOrderByNameAsc(Island island);
+	Monster findById(@Param("id") long Id);
 
 
 }
