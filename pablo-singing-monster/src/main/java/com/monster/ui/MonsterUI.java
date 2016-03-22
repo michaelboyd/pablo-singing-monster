@@ -1,25 +1,30 @@
 package com.monster.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
+import com.monster.bean.MonsterBean;
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -63,8 +68,17 @@ public class MonsterUI extends UI {
 		monsterFilter.addTextChangeListener(e -> listMonsters(e.getText()));
 		islandFilter.setInputPrompt("Filter by Island Name");
 		islandFilter.addTextChangeListener(e -> listIslands(e.getText()));		
-        monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
-        islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
+		
+		//monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
+		monsterTable.addValueChangeListener(new Property.ValueChangeListener() {
+		    public void valueChange(ValueChangeEvent event) {
+		    	MonsterBean monsterBean = (MonsterBean) monsterTable.getValue();
+		    	Monster m = (Monster) monsterRepo.findById(monsterBean.getId());
+		    	monsterForm.edit(m);
+		    }
+		});		
+		
+		islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
         
         setErrorHandler(new DefaultErrorHandler() {
     	    @Override
@@ -122,17 +136,45 @@ public class MonsterUI extends UI {
 	}
 	
 	protected void listMonsters(String text) {
+		
+		monsterTable.addContainerProperty("Name", String.class, null);
+		monsterTable.addContainerProperty("Description", String.class, null);		
+		
 		if (StringUtils.isEmpty(text)) {
-			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
-					Monster.class, monsterRepo.findAll(new Sort(Sort.Direction.ASC,
-							"name"))));
+			
+			List <Monster> monsters = monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
+
+			List <MonsterBean> monsterBeans = new ArrayList <MonsterBean> ();
+			
+			for(Monster monster : monsters) {
+				monsterBeans.add(new MonsterBean(monster.getId(), monster.getName(), monster.getDescription(), null, null));
+				// Create the table row.
+//				TextField name = new TextField();
+//				name.setValue(monster.getName());
+//				TextArea description = new TextArea();
+//				description.setValue(monster.getDescription());
+			    monsterTable.addItem(new Object[] {monster.getName(), monster.getDescription()});
+			}
+			
+			//monsterTable.setContainerDataSource(new BeanItemContainer<MonsterBean>( MonsterBean.class, monsterBeans));
+			
+			
+			
 		} else {
 			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
 					Monster.class, monsterRepo.findByNameStartsWithIgnoreCase(text)));
 		}
 		
-		monsterTable.setVisibleColumns(new Object[] { "name", "description", "island" });
-		monsterTable.setColumnHeaders(new String[] { "Name", "Description", "Island" });
+		//will need to go from a Monster to a MonsterBean here for the table
+		
+		//monsterTable.setVisibleColumns(new Object[] { "name", "description", "island" });
+		//monsterTable.setColumnHeaders(new String[] { "Name", "Description", "Island" });
+		
+//		monsterTable.setVisibleColumns(new Object[] { "name", "description" });
+//		monsterTable.setColumnHeaders(new String[] { "Name", "Description" });
+		
+//		monsterTable.addContainerProperty("Name", TextField.class, null);
+//		monsterTable.addContainerProperty("Description", TextArea.class, null);
 		
 		monsterTable.setPageLength(15);
 		monsterTable.setSelectable(true);
