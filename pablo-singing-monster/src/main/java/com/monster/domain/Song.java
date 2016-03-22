@@ -69,15 +69,15 @@ public class Song {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Song [id=");
-		builder.append(id);
-		builder.append(", monster=");
-		builder.append(monster);
-		builder.append(", createDate=");
-		builder.append(createDate);
-		builder.append(", fileName=");
+//		builder.append("Song [id=");
+//		builder.append(id);
+//		builder.append(", monster=");
+//		builder.append(monster);
+//		builder.append(", createDate=");
+//		builder.append(createDate);
+//		builder.append(", fileName=");
 		builder.append(fileName);
-		builder.append("]");
+//		builder.append("]");
 		return builder.toString();
 	}    
 
