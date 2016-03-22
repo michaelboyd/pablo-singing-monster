@@ -36,15 +36,15 @@ public class MonsterUI extends UI {
 	
 	private final Button addNewBtn = new Button("New Monster", FontAwesome.PLUS);
 	private final Button addIslandButton = new Button("New Island", FontAwesome.PLUS);
-	private final MonsterRepository repo;
+	private final MonsterRepository monsterRepo;
 	private final IslandRepository islandRepo;
 	private final MonsterForm monsterForm;
 	private final IslandForm islandForm;
 	
 	@Autowired
-	public MonsterUI(MonsterRepository repo, MonsterForm monsterForm,
+	public MonsterUI(MonsterRepository monsterRepo, MonsterForm monsterForm,
 			IslandForm islandForm, IslandRepository islandRepo) {
-		this.repo = repo;
+		this.monsterRepo = monsterRepo;
 		this.monsterForm = monsterForm;
 		this.islandForm = islandForm;
 		this.islandRepo = islandRepo;
@@ -69,17 +69,11 @@ public class MonsterUI extends UI {
         setErrorHandler(new DefaultErrorHandler() {
     	    @Override
     	    public void error(com.vaadin.server.ErrorEvent event) {
-    	        
-    	    	// Find the final cause
-				String cause = "<b>The click failed because:</b><br/>";
-				
+    	    	
 //				for (Throwable t = event.getThrowable(); t != null; t = t.getCause())
 //					if (t.getCause() == null) {// We're at final cause
-//						cause += t.getClass().getName() + "<br/>";
+//						//cause += t.getClass().getName() + "<br/>";
 //					}
-    	        // Display the error message in a custom fashion
-    	        //layout.addComponent(new Label(cause, ContentMode.HTML));
-
     	        // Do the default error handling (optional)
     	        //doDefault(event);
     	    }
@@ -130,16 +124,16 @@ public class MonsterUI extends UI {
 	protected void listMonsters(String text) {
 		if (StringUtils.isEmpty(text)) {
 			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
-					Monster.class, repo.findAll(new Sort(Sort.Direction.ASC,
+					Monster.class, monsterRepo.findAll(new Sort(Sort.Direction.ASC,
 							"name"))));
 		} else {
 			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
-					Monster.class, repo.findByNameStartsWithIgnoreCase(text)));
+					Monster.class, monsterRepo.findByNameStartsWithIgnoreCase(text)));
 		}
-		monsterTable.setVisibleColumns(new Object[] { "name", "description",
-				"island" });
-		monsterTable.setColumnHeaders(new String[] { "Name", "Description",
-				"Island" });
+		
+		monsterTable.setVisibleColumns(new Object[] { "name", "description", "island" });
+		monsterTable.setColumnHeaders(new String[] { "Name", "Description", "Island" });
+		
 		monsterTable.setPageLength(15);
 		monsterTable.setSelectable(true);
 		monsterTable.setImmediate(true);
