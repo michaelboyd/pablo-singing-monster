@@ -10,11 +10,14 @@ import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -62,6 +65,26 @@ public class MonsterUI extends UI {
 		islandFilter.addTextChangeListener(e -> listIslands(e.getText()));		
         monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
         islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
+        
+        setErrorHandler(new DefaultErrorHandler() {
+    	    @Override
+    	    public void error(com.vaadin.server.ErrorEvent event) {
+    	        
+    	    	// Find the final cause
+				String cause = "<b>The click failed because:</b><br/>";
+				
+//				for (Throwable t = event.getThrowable(); t != null; t = t.getCause())
+//					if (t.getCause() == null) {// We're at final cause
+//						cause += t.getClass().getName() + "<br/>";
+//					}
+    	        // Display the error message in a custom fashion
+    	        //layout.addComponent(new Label(cause, ContentMode.HTML));
+
+    	        // Do the default error handling (optional)
+    	        //doDefault(event);
+    	    }
+    	});	
+        
 
 		listMonsters(null);
         listIslands(null);
@@ -148,5 +171,6 @@ public class MonsterUI extends UI {
 	protected TextField getIslandFilter() {
 		return islandFilter;
 	}
+	
 	
 }
