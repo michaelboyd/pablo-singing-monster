@@ -6,20 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
-import com.monster.bean.MonsterBean;
 import com.monster.domain.Island;
 import com.monster.domain.IslandRepository;
 import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
+import com.monster.domain.Picture;
+import com.monster.domain.PictureRepository;
+import com.monster.utils.ImageSize;
+import com.monster.utils.ImageSource;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
@@ -42,16 +47,18 @@ public class MonsterUI extends UI {
 	private final Button addIslandButton = new Button("New Island", FontAwesome.PLUS);
 	private final MonsterRepository monsterRepo;
 	private final IslandRepository islandRepo;
+	private final PictureRepository pictureRepo;
 	private final MonsterForm monsterForm;
 	private final IslandForm islandForm;
 	
 	@Autowired
 	public MonsterUI(MonsterRepository monsterRepo, MonsterForm monsterForm,
-			IslandForm islandForm, IslandRepository islandRepo) {
+			IslandForm islandForm, IslandRepository islandRepo, PictureRepository pictureRepo) {
 		this.monsterRepo = monsterRepo;
 		this.monsterForm = monsterForm;
 		this.islandForm = islandForm;
 		this.islandRepo = islandRepo;
+		this.pictureRepo = pictureRepo;
 	}
 
 	@Override
@@ -135,6 +142,7 @@ public class MonsterUI extends UI {
 	
 	protected void listMonsters(String text) {
 		
+		monsterTable.addContainerProperty("Thumb", Embedded.class, null);
 		monsterTable.addContainerProperty("Name", Label.class, null);
 		monsterTable.addContainerProperty("Description", String.class, null);		
 		monsterTable.addContainerProperty("Island", String.class, null);
@@ -143,6 +151,8 @@ public class MonsterUI extends UI {
 			List<Monster> monsters = monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
 			Label nameField = null;
 			String island = null;
+			Embedded image = null;
+			StreamResource.StreamSource imagesource = null;
 			for (Monster monster : monsters) {
 				nameField = new Label();
 				nameField.setValue(monster.getName());
@@ -151,7 +161,19 @@ public class MonsterUI extends UI {
 					island = monster.getIsland().getName();
 				}
 				
-				monsterTable.addItem(new Object[] { nameField, monster.getDescription(), island }, monster.getId());
+				image = new Embedded();
+				Picture thumbnail = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+				if(thumbnail != null) {
+					imagesource = new ImageSource(thumbnail.getFile());
+					image.setSource(new StreamResource(imagesource, thumbnail.getFileName()));	
+					image.setVisible(true);
+				}
+				else {
+					image.setVisible(false);
+					image.setSource(null);
+				}
+				
+				monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island }, monster.getId());
 			}
 			
 		} else {
