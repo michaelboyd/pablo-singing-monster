@@ -83,7 +83,13 @@ public class MonsterUI extends UI {
 		    }
 		});		
 		
-		islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));		
+		//islandTable.addValueChangeListener(e -> islandForm.edit((Island) islandTable.getValue()));
+		islandTable.addValueChangeListener(new Property.ValueChangeListener() {
+		    public void valueChange(ValueChangeEvent event) {
+		    	Island i = (Island) islandRepo.findById((Long)islandTable.getValue());
+		    	islandForm.edit(i);
+		    }
+		});		
         
         setErrorHandler(new DefaultErrorHandler() {
     	    @Override
@@ -179,25 +185,47 @@ public class MonsterUI extends UI {
 			monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island }, monster.getId());
 		}
 	}
-
+	
 	protected void listIslands(String text) {
+		islandTable.addContainerProperty("Picture", Embedded.class, null);
+		islandTable.addContainerProperty("Name", Label.class, null);		
+		islandTable.removeAllItems();
+		
+		List <Island> islands = null;
 		if (StringUtils.isEmpty(text)) {
-			islandTable.setContainerDataSource(new BeanItemContainer<Island>(
-					Island.class, islandRepo.findAll(new Sort(
-							Sort.Direction.ASC, "name"))));
+			islands = islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
+			//islandTable.setContainerDataSource(new BeanItemContainer<Island>(Island.class, islands));
+			addIslandsToIslandTable(islands);
 		} else {
-			islandTable.setContainerDataSource(new BeanItemContainer<Island>(
-					Island.class, islandRepo
-							.findByNameStartsWithIgnoreCase(text)));
+			islands = islandRepo.findByNameStartsWithIgnoreCase(text);
+			//islandTable.setContainerDataSource(new BeanItemContainer<Island>(Island.class, islands));
+			addIslandsToIslandTable(islands);
 		}
-		islandTable.setVisibleColumns(new Object[] { "name" });
-		islandTable.setColumnHeaders(new String[] { "Name" });
+//		islandTable.setVisibleColumns(new Object[] { "name" });
+//		islandTable.setColumnHeaders(new String[] { "Name" });
 		islandTable.setPageLength(10);
 		islandTable.setSelectable(true);
 		islandTable.setImmediate(true);
 		islandTable.setNullSelectionAllowed(true);
 	}
 
+	private void addIslandsToIslandTable(List<Island> islands) {
+		Label nameField;
+		Embedded image;
+		Picture thumbnail;
+		for (Island island : islands) {
+			nameField = new Label();
+			image = new Embedded();
+			thumbnail = pictureRepo.findByIslandAndImageSize(island, ImageSize.thumb);
+			nameField.setValue(island.getName());
+			if(thumbnail != null) {
+				image.setSource(new StreamResource(new ImageSource(thumbnail.getFile()), thumbnail.getFileName()));	
+			}
+			islandTable.addItem(new Object[] { image, nameField }, island.getId());
+		}
+	}
+	
+	
 	protected TextField getMonsterFilter() {
 		return monsterFilter;
 	}

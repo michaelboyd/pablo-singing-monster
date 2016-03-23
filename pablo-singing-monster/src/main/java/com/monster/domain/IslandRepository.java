@@ -9,5 +9,6 @@ public interface IslandRepository extends JpaRepository <Island, Long> {
 
 	Island findByNameOrderByNameAsc(@Param("name") String name);
 	List <Island> findByNameStartsWithIgnoreCase(@Param("name") String name);
+	Island findById(@Param("id") long Id);
 	
 }
