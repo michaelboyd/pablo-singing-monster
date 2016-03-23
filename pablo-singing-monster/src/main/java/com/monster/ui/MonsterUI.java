@@ -1,6 +1,5 @@
 package com.monster.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -72,8 +71,7 @@ public class MonsterUI extends UI {
 		//monsterTable.addValueChangeListener(e -> monsterForm.edit((Monster) monsterTable.getValue()));		
 		monsterTable.addValueChangeListener(new Property.ValueChangeListener() {
 		    public void valueChange(ValueChangeEvent event) {
-		    	MonsterBean monsterBean = (MonsterBean) monsterTable.getValue();
-		    	Monster m = (Monster) monsterRepo.findById(monsterBean.getId());
+		    	Monster m = (Monster) monsterRepo.findById((Long)monsterTable.getValue());
 		    	monsterForm.edit(m);
 		    }
 		});		
@@ -137,46 +135,31 @@ public class MonsterUI extends UI {
 	
 	protected void listMonsters(String text) {
 		
-		monsterTable.addContainerProperty("Name", String.class, null);
+		monsterTable.addContainerProperty("Name", Label.class, null);
 		monsterTable.addContainerProperty("Description", String.class, null);		
-		
-		if (StringUtils.isEmpty(text)) {
-			
-			List <Monster> monsters = monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
+		monsterTable.addContainerProperty("Island", String.class, null);
 
-			List <MonsterBean> monsterBeans = new ArrayList <MonsterBean> ();
-			
-			for(Monster monster : monsters) {
-				monsterBeans.add(new MonsterBean(monster.getId(), monster.getName(), monster.getDescription(), null, null));
-				// Create the table row.
-//				TextField name = new TextField();
-//				name.setValue(monster.getName());
-//				TextArea description = new TextArea();
-//				description.setValue(monster.getDescription());
-			    monsterTable.addItem(new Object[] {monster.getName(), monster.getDescription()});
+		if (StringUtils.isEmpty(text)) {
+			List<Monster> monsters = monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
+			Label nameField = null;
+			String island = null;
+			for (Monster monster : monsters) {
+				nameField = new Label();
+				nameField.setValue(monster.getName());
+				
+				if(monster.getIsland() != null) {
+					island = monster.getIsland().getName();
+				}
+				
+				monsterTable.addItem(new Object[] { nameField, monster.getDescription(), island }, monster.getId());
 			}
-			
-			//monsterTable.setContainerDataSource(new BeanItemContainer<MonsterBean>( MonsterBean.class, monsterBeans));
-			
-			
 			
 		} else {
 			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
-					Monster.class, monsterRepo.findByNameStartsWithIgnoreCase(text)));
+					Monster.class, monsterRepo
+							.findByNameStartsWithIgnoreCase(text)));
 		}
-		
-		//will need to go from a Monster to a MonsterBean here for the table
-		
-		//monsterTable.setVisibleColumns(new Object[] { "name", "description", "island" });
-		//monsterTable.setColumnHeaders(new String[] { "Name", "Description", "Island" });
-		
-//		monsterTable.setVisibleColumns(new Object[] { "name", "description" });
-//		monsterTable.setColumnHeaders(new String[] { "Name", "Description" });
-		
-//		monsterTable.addContainerProperty("Name", TextField.class, null);
-//		monsterTable.addContainerProperty("Description", TextArea.class, null);
-		
-		monsterTable.setPageLength(15);
+		monsterTable.setPageLength(10);
 		monsterTable.setSelectable(true);
 		monsterTable.setImmediate(true);
 		monsterTable.setNullSelectionAllowed(true);
