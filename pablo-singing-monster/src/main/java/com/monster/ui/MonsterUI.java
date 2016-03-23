@@ -141,50 +141,43 @@ public class MonsterUI extends UI {
 	}
 	
 	protected void listMonsters(String text) {
-		
-		monsterTable.addContainerProperty("Thumb", Embedded.class, null);
+		monsterTable.addContainerProperty("Picture", Embedded.class, null);
 		monsterTable.addContainerProperty("Name", Label.class, null);
 		monsterTable.addContainerProperty("Description", String.class, null);		
 		monsterTable.addContainerProperty("Island", String.class, null);
+		monsterTable.removeAllItems();
 
+		List<Monster> monsters = null;
 		if (StringUtils.isEmpty(text)) {
-			List<Monster> monsters = monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
-			Label nameField = null;
-			String island = null;
-			Embedded image = null;
-			StreamResource.StreamSource imagesource = null;
-			for (Monster monster : monsters) {
-				nameField = new Label();
-				nameField.setValue(monster.getName());
-				
-				if(monster.getIsland() != null) {
-					island = monster.getIsland().getName();
-				}
-				
-				image = new Embedded();
-				Picture thumbnail = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
-				if(thumbnail != null) {
-					imagesource = new ImageSource(thumbnail.getFile());
-					image.setSource(new StreamResource(imagesource, thumbnail.getFileName()));	
-					image.setVisible(true);
-				}
-				else {
-					image.setVisible(false);
-					image.setSource(null);
-				}
-				
-				monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island }, monster.getId());
-			}
-			
+			monsters = monsterRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
+			addMonstersToMonsterTable(monsters);
 		} else {
-			monsterTable.setContainerDataSource(new BeanItemContainer<Monster>(
-					Monster.class, monsterRepo
-							.findByNameStartsWithIgnoreCase(text)));
+			monsters = monsterRepo.findByNameStartsWithIgnoreCase(text);
+			addMonstersToMonsterTable(monsters);
 		}
 		monsterTable.setPageLength(10);
 		monsterTable.setSelectable(true);
 		monsterTable.setImmediate(true);
 		monsterTable.setNullSelectionAllowed(true);
+	}
+
+	private void addMonstersToMonsterTable(List<Monster> monsters) {
+		Label nameField;
+		String island = null;
+		Embedded image;
+		Picture thumbnail;
+		for (Monster monster : monsters) {
+			nameField = new Label();
+			image = new Embedded();
+			thumbnail = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
+			nameField.setValue(monster.getName());
+			if(monster.getIsland() != null) 
+				island = monster.getIsland().getName();
+			if(thumbnail != null) {
+				image.setSource(new StreamResource(new ImageSource(thumbnail.getFile()), thumbnail.getFileName()));	
+			}
+			monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island }, monster.getId());
+		}
 	}
 
 	protected void listIslands(String text) {
