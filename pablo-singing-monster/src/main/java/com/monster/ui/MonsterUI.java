@@ -12,6 +12,8 @@ import com.monster.domain.Monster;
 import com.monster.domain.MonsterRepository;
 import com.monster.domain.Picture;
 import com.monster.domain.PictureRepository;
+import com.monster.domain.Song;
+import com.monster.domain.SongRepository;
 import com.monster.utils.ImageSize;
 import com.monster.utils.ImageSource;
 import com.vaadin.annotations.Theme;
@@ -47,17 +49,19 @@ public class MonsterUI extends UI {
 	private final MonsterRepository monsterRepo;
 	private final IslandRepository islandRepo;
 	private final PictureRepository pictureRepo;
+	private final SongRepository songRepo;
 	private final MonsterForm monsterForm;
 	private final IslandForm islandForm;
 	
 	@Autowired
 	public MonsterUI(MonsterRepository monsterRepo, MonsterForm monsterForm,
-			IslandForm islandForm, IslandRepository islandRepo, PictureRepository pictureRepo) {
+			IslandForm islandForm, IslandRepository islandRepo, PictureRepository pictureRepo, SongRepository songRepo) {
 		this.monsterRepo = monsterRepo;
 		this.monsterForm = monsterForm;
 		this.islandForm = islandForm;
 		this.islandRepo = islandRepo;
 		this.pictureRepo = pictureRepo;
+		this.songRepo = songRepo;
 	}
 
 	@Override
@@ -150,6 +154,7 @@ public class MonsterUI extends UI {
 		monsterTable.addContainerProperty("Name", Label.class, null);
 		monsterTable.addContainerProperty("Description", String.class, null);		
 		monsterTable.addContainerProperty("Island", String.class, null);
+		monsterTable.addContainerProperty("Song File", String.class, null);
 
 		List<Monster> monsters = null;
 		if (StringUtils.isEmpty(text)) {
@@ -170,17 +175,25 @@ public class MonsterUI extends UI {
 		String island = null;
 		Embedded image;
 		Picture thumbnail;
+		
 		for (Monster monster : monsters) {
+			String songFile = null;
 			nameField = new Label();
 			image = new Embedded();
 			thumbnail = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
 			nameField.setValue(monster.getName());
 			if(monster.getIsland() != null) 
 				island = monster.getIsland().getName();
+			
+			Song song = songRepo.findByMonster(monster);
+			if(song != null) {
+				songFile = song.getFileName();
+			}
+			
 			if(thumbnail != null) {
 				image.setSource(new StreamResource(new ImageSource(thumbnail.getFile()), thumbnail.getFileName()));	
 			}
-			monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island }, monster.getId());
+			monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island, songFile }, monster.getId());
 		}
 	}
 	
