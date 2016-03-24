@@ -17,7 +17,6 @@ import com.monster.utils.ImageSource;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.StreamResource;
@@ -151,7 +150,6 @@ public class MonsterUI extends UI {
 		monsterTable.addContainerProperty("Name", Label.class, null);
 		monsterTable.addContainerProperty("Description", String.class, null);		
 		monsterTable.addContainerProperty("Island", String.class, null);
-		monsterTable.removeAllItems();
 
 		List<Monster> monsters = null;
 		if (StringUtils.isEmpty(text)) {
@@ -189,20 +187,15 @@ public class MonsterUI extends UI {
 	protected void listIslands(String text) {
 		islandTable.addContainerProperty("Picture", Embedded.class, null);
 		islandTable.addContainerProperty("Name", Label.class, null);		
-		islandTable.removeAllItems();
 		
 		List <Island> islands = null;
 		if (StringUtils.isEmpty(text)) {
 			islands = islandRepo.findAll(new Sort(Sort.Direction.ASC, "name"));
-			//islandTable.setContainerDataSource(new BeanItemContainer<Island>(Island.class, islands));
 			addIslandsToIslandTable(islands);
 		} else {
 			islands = islandRepo.findByNameStartsWithIgnoreCase(text);
-			//islandTable.setContainerDataSource(new BeanItemContainer<Island>(Island.class, islands));
 			addIslandsToIslandTable(islands);
 		}
-//		islandTable.setVisibleColumns(new Object[] { "name" });
-//		islandTable.setColumnHeaders(new String[] { "Name" });
 		islandTable.setPageLength(10);
 		islandTable.setSelectable(true);
 		islandTable.setImmediate(true);
