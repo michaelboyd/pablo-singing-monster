@@ -103,6 +103,8 @@ public class MonsterUI extends UI {
         setErrorHandler(new DefaultErrorHandler() {
     	    @Override
     	    public void error(com.vaadin.server.ErrorEvent event) {
+    	    	//System.out.println("Stop");
+    	    	
     	    	
 //				for (Throwable t = event.getThrowable(); t != null; t = t.getCause())
 //					if (t.getCause() == null) {// We're at final cause
@@ -156,9 +158,11 @@ public class MonsterUI extends UI {
 	}
 	
 	protected void listMonsters(String text) {
+		monsterTable.removeAllItems();
+		
 		monsterTable.addContainerProperty("Picture", Embedded.class, null);
 		monsterTable.addContainerProperty("Name", Label.class, null);
-		monsterTable.addContainerProperty("Description", String.class, null);		
+		monsterTable.addContainerProperty("Description", Label.class, null);		
 		monsterTable.addContainerProperty("Island", String.class, null);
 		monsterTable.addContainerProperty("Song File", String.class, null);
 
@@ -180,6 +184,7 @@ public class MonsterUI extends UI {
 
 	private void addMonstersToMonsterTable(List<Monster> monsters) {
 		Label nameField;
+		Label descriptionField;
 		String island = null;
 		Embedded image;
 		Picture thumbnail;
@@ -187,13 +192,18 @@ public class MonsterUI extends UI {
 		for (Monster monster : monsters) {
 			String songFile = null;
 			nameField = new Label();
+			descriptionField = new Label();
 			image = new Embedded();
 			thumbnail = pictureRepo.findByMonsterAndImageSize(monster, ImageSize.thumb);
 			nameField.setValue(monster.getName());
-			if(monster.getIsland() != null) 
+			descriptionField.setValue(monster.getDescription());
+
+			if(monster.getIsland() != null) {
 				island = monster.getIsland().getName();
+			}
 			
 			Song song = songRepo.findByMonster(monster);
+			
 			if(song != null) {
 				songFile = song.getFileName();
 			}
@@ -203,20 +213,26 @@ public class MonsterUI extends UI {
 			}
 			
 			Item monsterItem = monsterTable.getItem(monster.getId());
+			
 			if (monsterItem != null) {
 				monsterItem.getItemProperty("Picture").setValue(image);
 				monsterItem.getItemProperty("Name").setValue(nameField);
-				monsterItem.getItemProperty("Description").setValue(monster.getDescription());
+				monsterItem.getItemProperty("Description").setValue(descriptionField);
 				monsterItem.getItemProperty("Island").setValue(island);
 				monsterItem.getItemProperty("Song File").setValue(songFile);
-			} else {
-				monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island, songFile },
+			} 
+			else 
+			{
+				monsterTable.addItem(new Object[] { image, nameField, descriptionField, island, songFile },
 						monster.getId());
 			}			
 		}
 	}
 	
 	protected void listIslands(String text) {
+		
+		islandTable.removeAllItems();
+		
 		islandTable.addContainerProperty("Picture", Embedded.class, null);
 		islandTable.addContainerProperty("Name", Label.class, null);		
 		
