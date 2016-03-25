@@ -17,6 +17,7 @@ import com.monster.domain.SongRepository;
 import com.monster.utils.ImageSize;
 import com.monster.utils.ImageSource;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.server.DefaultErrorHandler;
@@ -193,7 +194,18 @@ public class MonsterUI extends UI {
 			if(thumbnail != null) {
 				image.setSource(new StreamResource(new ImageSource(thumbnail.getFile()), thumbnail.getFileName()));	
 			}
-			monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island, songFile }, monster.getId());
+			
+			Item monsterItem = monsterTable.getItem(monster.getId());
+			if (monsterItem != null) {
+				monsterItem.getItemProperty("Picture").setValue(image);
+				monsterItem.getItemProperty("Name").setValue(nameField);
+				monsterItem.getItemProperty("Description").setValue(monster.getDescription());
+				monsterItem.getItemProperty("Island").setValue(island);
+				monsterItem.getItemProperty("Song File").setValue(songFile);
+			} else {
+				monsterTable.addItem(new Object[] { image, nameField, monster.getDescription(), island, songFile },
+						monster.getId());
+			}			
 		}
 	}
 	
@@ -227,7 +239,14 @@ public class MonsterUI extends UI {
 			if(thumbnail != null) {
 				image.setSource(new StreamResource(new ImageSource(thumbnail.getFile()), thumbnail.getFileName()));	
 			}
-			islandTable.addItem(new Object[] { image, nameField }, island.getId());
+			Item islandItem = islandTable.getItem(island.getId());
+			if(islandItem != null) {
+				islandItem.getItemProperty("Picture").setValue(image);
+				islandItem.getItemProperty("Name").setValue(nameField);
+			}
+			else {
+				islandTable.addItem(new Object[] { image, nameField }, island.getId());	
+			}
 		}
 	}
 	
