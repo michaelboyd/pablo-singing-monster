@@ -157,7 +157,7 @@ public class MonsterForm extends FormLayout implements FormConstants{
             setVisible(false);
 			image.setVisible(false);
 			image.setSource(null);
-			getUI().listIslands(null);
+			refreshMonsterList();
         } catch (FieldGroup.CommitException e) {
             // Validation exceptions could be shown here
         }
