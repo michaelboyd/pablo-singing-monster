@@ -3,6 +3,7 @@ package com.monster.ui;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
@@ -53,16 +54,20 @@ public class MonsterUI extends UI {
 	private final SongRepository songRepo;
 	private final MonsterForm monsterForm;
 	private final IslandForm islandForm;
+	private int pictureColumnWidth;
+	
 	
 	@Autowired
-	public MonsterUI(MonsterRepository monsterRepo, MonsterForm monsterForm,
-			IslandForm islandForm, IslandRepository islandRepo, PictureRepository pictureRepo, SongRepository songRepo) {
+	public MonsterUI(MonsterRepository monsterRepo, MonsterForm monsterForm, IslandForm islandForm,
+			IslandRepository islandRepo, PictureRepository pictureRepo, SongRepository songRepo,
+			@Value("${image_thumb_max_width}") int maxWidthThumb) {
 		this.monsterRepo = monsterRepo;
 		this.monsterForm = monsterForm;
 		this.islandForm = islandForm;
 		this.islandRepo = islandRepo;
 		this.pictureRepo = pictureRepo;
 		this.songRepo = songRepo;
+		this.pictureColumnWidth = maxWidthThumb + 10;
 	}
 
 	@Override
@@ -165,10 +170,12 @@ public class MonsterUI extends UI {
 			monsters = monsterRepo.findByNameStartsWithIgnoreCase(text);
 			addMonstersToMonsterTable(monsters);
 		}
+		
+		monsterTable.setColumnWidth("Picture", pictureColumnWidth);
 		monsterTable.setPageLength(10);
 		monsterTable.setSelectable(true);
 		monsterTable.setImmediate(true);
-		monsterTable.setNullSelectionAllowed(true);
+		monsterTable.setNullSelectionAllowed(true);	
 	}
 
 	private void addMonstersToMonsterTable(List<Monster> monsters) {
@@ -221,6 +228,8 @@ public class MonsterUI extends UI {
 			islands = islandRepo.findByNameStartsWithIgnoreCase(text);
 			addIslandsToIslandTable(islands);
 		}
+		
+		islandTable.setColumnWidth("Picture", pictureColumnWidth);
 		islandTable.setPageLength(10);
 		islandTable.setSelectable(true);
 		islandTable.setImmediate(true);
